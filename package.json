@@ -10,6 +10,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.7.0"
+    "@supabase/supabase-js": "^2.42.7",
+    "astro": "^4.7.0",
+    "flowbite": "^2.3.0"
   }
 }
