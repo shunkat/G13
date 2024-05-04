@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const { id } = Astro.params;
+---
+
+<Layout title="出欠情報閲覧ページ">
+  <main>
+    <h1>日程表示ページ</h1>
+    <p>ID: {id}</p>
+    <p>日程表示部分</p>
+    <a href={`/answer/modify-schedule-${id}`}>日程修正</a>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+    background-color: white;
+    color: black;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+</style>
