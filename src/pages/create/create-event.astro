@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase';
+---
+
+<Layout title="Create an Event">
+    <form id="eventForm"> <!-- ここに id="eventForm" を追加 -->
+        <label for="eventName">Event Name:</label>
+        <input type="text" id="eventName" name="eventName" required />
+
+        <label for="eventDetails">Details:</label>
+        <textarea id="eventDetails" name="eventDetails" required></textarea>
+
+        <label for="eventDates">Date Options:</label>
+        <input type="text" id="eventDates" name="eventDates" required />
+
+        <button type="submit">Save Event</button>
+    </form>
+</Layout>
+
+
+<script type="module">
+    document.getElementById('eventForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const eventName = formData.get('eventName');
+        const eventDetails = formData.get('eventDetails');
+        const eventDates = formData.get('eventDates');
+
+        // ここにSupabaseへの保存処理を記述する場合
+        // const { data, error } = await supabase
+        //     .from('events')
+        //     .insert([{ name: eventName, details: eventDetails, dates: eventDates }]);
+        
+        const eventId = "012345689";
+        window.location.href = `/create/show-event-url/${eventId}`;
+    });
+</script>
