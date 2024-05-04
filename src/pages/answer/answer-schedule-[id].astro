@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const { id } = Astro.params;
+---
+
+<Layout title="日程回答ページ">
+  <main>
+    <h1>日程回答ページ</h1>
+    <p>ID: {id}</p>
+    <p>日程回答部分</p>
+    <button id="answerButton">回答</button>
+  </main>
+</Layout>
+
+<script>
+  document.getElementById('answerButton').addEventListener('click', () => {
+    const eventId = "{id}";
+    window.location.href = `/answer/show-schedule-result-${eventId}`;
+  });
+</script>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+    background-color: white;
+    color: black;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+</style>

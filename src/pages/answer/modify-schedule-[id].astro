@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const { id } = Astro.params;
+---
+
+<Layout title="出欠情報更新ページ">
+  <main>
+    <h1>日程修正ページ</h1>
+    <p>ID: {id}</p>
+    <p>日程修正部分</p>
+    <form>
+      <label for="modifiedSchedule">修正した日程:</label>
+      <input type="text" id="modifiedSchedule" name="modifiedSchedule" required />
+      <button type="submit">保存</button>
+    </form>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+    background-color: white;
+    color: black;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+</style>
