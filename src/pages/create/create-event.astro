@@ -1,38 +1,59 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { supabase } from '../../lib/supabase';
 ---
 
 <Layout title="Create an Event">
-    <form id="eventForm"> <!-- ここに id="eventForm" を追加 -->
-        <label for="eventName">Event Name:</label>
+    <form id="eventForm" data-netlify="true">
+        <label for="eventName">イベント名</label>
         <input type="text" id="eventName" name="eventName" required />
 
-        <label for="eventDetails">Details:</label>
-        <textarea id="eventDetails" name="eventDetails" required></textarea>
+        <label for="eventMemo">イベントメモ</label>
+        <textarea id="eventMemo" name="eventMemo" required></textarea>
 
-        <label for="eventDates">Date Options:</label>
+        <!-- データピッカーを実装するところ -->
+        <label for="eventDates">候補日</label>
         <input type="text" id="eventDates" name="eventDates" required />
 
-        <button type="submit">Save Event</button>
+        <button type="submit">保存</button>
     </form>
 </Layout>
 
-
 <script type="module">
-    document.getElementById('eventForm').addEventListener('submit', async (event) => {
+    const getCurrentTimestamp = () => new Date().toISOString();
+
+    const eventForm = document.getElementById('eventForm');
+
+    eventForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const eventName = formData.get('eventName');
-        const eventDetails = formData.get('eventDetails');
+        const eventMemo = formData.get('eventMemo');
         const eventDates = formData.get('eventDates');
 
-        // ここにSupabaseへの保存処理を記述する場合
-        // const { data, error } = await supabase
-        //     .from('events')
-        //     .insert([{ name: eventName, details: eventDetails, dates: eventDates }]);
-        
-        const eventId = "012345689";
-        window.location.href = `/create/show-event-url/${eventId}`;
+        // Example data for missing variables
+        const eventCreaterName = 'Anonymous User'; // Or pull from a cookie or user session
+        const eventCreateTime = getCurrentTimestamp();
+        const eventUpdateTime = eventCreateTime;
+
+        const response = await fetch('/api/createevent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                event_name: eventName,
+                event_memo: eventMemo
+            })
+        });
+
+        const data = await response.json();
+        console.log(data[0]);
+
+        if (response.ok) {
+            // Redirect to a confirmation or details page (replace with appropriate URL structure)
+            window.location.href = `/create/show-event-url-${data[0].event_no}`;
+        } else {
+            console.error('Error inserting event:', data.error);
+        }
     });
 </script>
