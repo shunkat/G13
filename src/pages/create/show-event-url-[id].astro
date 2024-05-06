@@ -12,3 +12,21 @@ const { id } = Astro.params;
     <a href={`/answer/answer-schedule-${id}`}>/answer/answer-schedule-{id}</a>
   </main>
 </Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+    background-color: white;
+    color: black;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+</style>
