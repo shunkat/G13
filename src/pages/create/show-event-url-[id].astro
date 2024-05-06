@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro';
+// idを受け取る
+const { id } = Astro.params;
+
+---
+
+<Layout title={`Schedule ID: ${id}`}>
+  <main>
+    <h1>Schedule ID: {id}</h1>
+    <p>Answer your schedule at the following URL:</p>
+    <a href={`/answer/answer-schedule-${id}`}>/answer/answer-schedule-{id}</a>
+  </main>
+</Layout>
