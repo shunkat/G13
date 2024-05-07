@@ -3,18 +3,62 @@ import Layout from '../../layouts/Layout.astro';
 ---
 
 <Layout title="Create an Event">
-    <form id="eventForm" data-netlify="true">
-        <label for="eventName">イベント名</label>
-        <input type="text" id="eventName" name="eventName" required />
+    <h2 class="title">調整くん</h2>
+    <form id="eventForm" class="form"> <!-- ここに id="eventForm" を追加 -->
+        <div class="step1">
+            <div class="step-title">
+                <div>
+                    <label for="eventName">Step1)イベント名</label>
+                    <br>
+                    <span>※忘年会、打ち合わせなど</span>
+                </div>
+                <input type="text" id="eventName" name="eventName" placeholder="ソフトウェア開発部お花見" required />
+            </div> 
+            <div>
+                <label for="eventMemo">メモ（任意）</label>
+                <br>
+                <span>※飲み会の日程調整をしましょう！</span>
+            </div>
+            <textarea rows="10" cols="25" id="eventMemo" name="eventMemo" placeholder="ソフトウェア開発部でお花見をしましょう♩" required></textarea>
+        </div>
 
-        <label for="eventMemo">イベントメモ</label>
-        <textarea id="eventMemo" name="eventMemo" required></textarea>
+        <div class="step2">
+            <div class="step-title">
+                <label for="eventName">Step2)日程候補</label>
+                <br>
+                <span>※候補日程/日時を入力してください</span>
+                <br>
+                <span>候補の区切りは改行で判断されます。</span>
+                <br>
+            </div>
+            <div class="date-picker" >
+                <div>
+                    <span>例:</span>
+                    <br>
+                    <span>8/7(月)20:00〜</span>
+                    <br>
+                    <span>8/8(火)20:00〜</span>
+                    <br>
+                    <span>8/9(水)21:00〜</span>
+                    <br>
+                    <textarea
+                        rows="10" cols="25"
+                        id="eventDate"
+                        name="eventDate"
+                        placeholder="8/7(月)20:00〜\n8/8(火)20:00〜\n8/9(水)21:00〜"
+                        required
+                    />
+                </div>
+                <div>
+                    <span>↓日付をクリックすると日程に日時が入ります。</span><br>
+                    <input type="date" name="" id="">   
+                </div>
+            </div>
+        </div>
+        <!-- <label for="eventDates">Date Options:</label>
+        <input type="text" id="eventDates" name="eventDates" required /> -->
 
-        <!-- データピッカーを実装するところ -->
-        <label for="eventDates">候補日</label>
-        <input type="text" id="eventDates" name="eventDates" required />
-
-        <button type="submit">保存</button>
+        <button class="submit-button" type="submit">イベント作成</button>
     </form>
 </Layout>
 
@@ -42,7 +86,8 @@ import Layout from '../../layouts/Layout.astro';
             },
             body: JSON.stringify({
                 event_name: eventName,
-                event_memo: eventMemo
+                event_memo: eventMemo,
+                event_create_time: eventCreateTime
             })
         });
 
