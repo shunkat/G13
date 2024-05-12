@@ -1,16 +1,32 @@
-# Astro Starter Kit: Basics
+# 環境構築手順
+## npmのインストール
+[参考サイト](https://qiita.com/mk185/items/7ad004bf202f400daea1)をみてやってみてください
+できなかったら教えてください。
 
-```sh
-npm create astro@latest -- --template basics
-```
+## アプリの起動
+macの人はterminal, windowsの人はcommand promptに以下のコマンドを打ってください
+> npm install
+> 
+> npm run dev
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+これで立ち上がります。
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+## コード修正をするときには？
+自分の担当するページのファイルを見つけてください。
+> srcフォルダ>pagesフォルダ>{ページのファイル名}.astro
+
+が該当ページです。
+書き方はHTML / CSSなので多分みたらわかるのですが、一緒にやりましょう。
+
+## 作業開始するときに
+1. vscodeの左下のブランチボタンを押して、自分のブランチを作成してから作業を開始する
+2. 自分が担当するページを探す
+3. ターミナルでnpm run devとうち、出てきたurlをクリックする＝現在の見た目が確認できる
+4. HTML部分は<Layout>タグの中に書く、CSS部分は<style>タグの中に書く
+
+   
+
 
 ## 🚀 Project Structure
 
