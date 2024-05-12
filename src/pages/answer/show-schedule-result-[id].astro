@@ -4,12 +4,67 @@ const { id } = Astro.params;
 ---
 
 <Layout title="出欠情報閲覧ページ">
+  <!-- MEMO: <p>ID: {id}</p> -->
   <main>
-    <h1>日程表示ページ</h1>
-    <p>ID: {id}</p>
-    <p>日程表示部分</p>
-    <a href={`/answer/modify-schedule-${id}`}>日程修正</a>
-  </main>
+    <h2>調整くん</h2>
+    <div class="item">
+      <div class="sub-title">
+        <h3>ソフトウェア開発部お花見</h3>
+        <div><button class="event_edit" type="submit">イベント編集</button></div>
+      </div>
+      <hr>
+      <p>回答者数0人 あなたが幹事のイベントです</p>
+    </div>
+    <div class="item">
+      <h3>イベントの詳細説明</h3>
+      <p>ソフト開発部でお花見をしましょう。3/20までにご都合入力ください!</p>
+    </div>
+    <div class="item">
+      <h3>日にち候補</h3>
+      <p>※各自の出欠状況を変更するには名前のリンクをクリックしてください。</p>
+      <table class="schedule-result">
+        <tr>
+          <td>日程</td>
+          <td>○</td>
+          <td>△</td>
+          <td>×</td>
+        </tr>
+        <tr>
+          <td>3/28(土)13:00</td>
+          <td>0人</td>
+          <td>0人</td>
+          <td>0人</td>
+        </tr>
+        <tr>
+          <td>3/29(日)13:00</td>
+          <td>0人</td>
+          <td>0人</td>
+          <td>0人</td>
+        </tr>
+        <tr>
+          <td>4/3(土)13:00</td>
+          <td>0人</td>
+          <td>0人</td>
+          <td>0人</td>
+        </tr>
+        <tr>
+          <td>4/4(日)13:00</td>
+          <td>0人</td>
+          <td>0人</td>
+          <td>0人</td>
+        </tr>
+        </tr>
+        <tr>
+          <td>コメント</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+    </table>
+    </div>
+     <br>
+     <button class="submit-button" type="submit">出欠を入力する</button>
+  </main>  
 </Layout>
 
 <style>
@@ -20,12 +75,28 @@ const { id } = Astro.params;
     max-width: calc(100% - 2rem);
     background-color: white;
     color: black;
-    font-size: 20px;
-    line-height: 1.6;
+    /* font-size: 20px;
+    line-height: 1.6; */
   }
-  h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1em;
+
+  table, tr, td {
+    border: 1px solid;
   }
+  h3, p {
+    margin: 0;
+  } 
+
+  .sub-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .item{
+    padding-bottom: 24px;
+  }
+  .schedule-result{
+    margin-top: 8px;
+  }
+  
 </style>
