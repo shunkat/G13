@@ -10,9 +10,12 @@ import Layout from '../../layouts/Layout.astro';
         <label for="eventMemo">イベントメモ</label>
         <textarea id="eventMemo" name="eventMemo" required></textarea>
 
-        <!-- データピッカーを実装するところ -->
+        <!-- デートピッカーを実装 -->
         <label for="eventDates">候補日</label>
-        <input type="text" id="eventDates" name="eventDates" required />
+        <input type="date" id="eventDates" name="eventDates" />
+        <button type="button" id="addDate">日付追加</button>
+
+        <div id="selectedDates"></div>
 
         <button type="submit">保存</button>
     </form>
@@ -22,38 +25,72 @@ import Layout from '../../layouts/Layout.astro';
     const getCurrentTimestamp = () => new Date().toISOString();
 
     const eventForm = document.getElementById('eventForm');
+    const addDateButton = document.getElementById('addDate');
+    const selectedDates = document.getElementById('selectedDates');
+    let datesArray = [];
+
+    addDateButton.addEventListener('click', () => {
+        const dateInput = document.getElementById('eventDates');
+        if (dateInput.value && !datesArray.includes(dateInput.value)) {
+            datesArray.push(dateInput.value);
+            updateDatesDisplay();
+        }
+    });
+
+    function updateDatesDisplay() {
+        selectedDates.innerHTML = '';
+        datesArray.forEach(date => {
+            const dateElement = document.createElement('div');
+            dateElement.textContent = date;
+            selectedDates.appendChild(dateElement);
+        });
+    }
 
     eventForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const eventName = formData.get('eventName');
         const eventMemo = formData.get('eventMemo');
-        const eventDates = formData.get('eventDates');
 
-        // Example data for missing variables
-        const eventCreaterName = 'Anonymous User'; // Or pull from a cookie or user session
         const eventCreateTime = getCurrentTimestamp();
-        const eventUpdateTime = eventCreateTime;
 
-        const response = await fetch('/api/createevent', {
+        const createResponse = await fetch('/api/createevent', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 event_name: eventName,
-                event_memo: eventMemo
+                event_memo: eventMemo,
+                event_create_time: eventCreateTime,
             })
         });
 
-        const data = await response.json();
-        console.log(data[0]);
+        const createData = await createResponse.json();
 
-        if (response.ok) {
-            // Redirect to a confirmation or details page (replace with appropriate URL structure)
-            window.location.href = `/create/show-event-url-${data[0].event_no}`;
+        if (createResponse.ok) {
+            const eventNo = createData[0].event_no;
+            console.log('Event created:', eventNo);
+            // イベント日付の情報を登録する
+            const dateResponse = await fetch(`/api/addeventdates/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    event_no: eventNo,
+                    event_dates: datesArray,
+                })
+            });
+
+            if (dateResponse.ok) {
+                // Redirect to a confirmation or details page
+                window.location.href = `/create/show-event-url-${eventNo}`;
+            } else {
+                console.error('Error adding event dates:', await dateResponse.json());
+            }
         } else {
-            console.error('Error inserting event:', data.error);
+            console.error('Error creating event:', createData.error);
         }
     });
 </script>
