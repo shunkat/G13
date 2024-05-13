@@ -4,103 +4,66 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout title="Create an Event">
     <h2 class="title">調整くん</h2>
-    <form id="eventForm" class="form"> <!-- ここに id="eventForm" を追加 -->
+    <form id="eventForm" class="form">
         <div class="step1">
             <div class="step-title">
-                <div>
-                    <label for="eventName">Step1)イベント名</label>
-                    <br>
-                    <span>※忘年会、打ち合わせなど</span>
-                </div>
+                <label for="eventName">Step1)イベント名</label>
+                <br>
+                <span>※忘年会、打ち合わせなど</span>
                 <input type="text" id="eventName" name="eventName" placeholder="ソフトウェア開発部お花見" required />
-            </div> 
+            </div>
             <div>
                 <label for="eventMemo">メモ（任意）</label>
                 <br>
                 <span>※飲み会の日程調整をしましょう！</span>
+                <textarea rows="10" cols="25" id="eventMemo" name="eventMemo" placeholder="ソフトウェア開発部でお花見をしましょう♩" required></textarea>
             </div>
-            <textarea rows="10" cols="25" id="eventMemo" name="eventMemo" placeholder="ソフトウェア開発部でお花見をしましょう♩" required></textarea>
         </div>
 
         <div class="step2">
             <div class="step-title">
-                <label for="eventName">Step2)日程候補</label>
+                <label for="eventDates">Step2)日程候補</label>
                 <br>
                 <span>※候補日程/日時を入力してください</span>
                 <br>
                 <span>候補の区切りは改行で判断されます。</span>
-                <br>
             </div>
-            <div class="date-picker" >
-                <div>
-                    <span>例:</span>
-                    <br>
-                    <span>8/7(月)20:00〜</span>
-                    <br>
-                    <span>8/8(火)20:00〜</span>
-                    <br>
-                    <span>8/9(水)21:00〜</span>
-                    <br>
-                    <textarea
-                        rows="10" cols="25"
-                        id="eventDate"
-                        name="eventDate"
-                        placeholder="8/7(月)20:00〜\n8/8(火)20:00〜\n8/9(水)21:00〜"
-                        required
-                    />
-                </div>
-                <div>
-                    <span>↓日付をクリックすると日程に日時が入ります。</span><br>
-                    <input type="date" name="" id="">   
-                </div>
-            </div>
+            <input type="date" id="eventDates" name="eventDates" />
+            <textarea id="selectedDates" rows="5" cols="25" placeholder="追加された日程がここに表示されます"></textarea>
         </div>
-        <!-- <label for="eventDates">Date Options:</label>
-        <input type="text" id="eventDates" name="eventDates" required /> -->
-
-        <!-- デートピッカーを実装 -->
-        <label for="eventDates">候補日</label>
-        <input type="date" id="eventDates" name="eventDates" />
-        <button type="button" id="addDate">日付追加</button>
-
-        <div id="selectedDates"></div>
 
         <button type="submit">イベント作成</button>
     </form>
 </Layout>
 
+<style>
+    /* datepickerを常に表示する */
+    #eventDates {
+        display: block;
+    }
+</style>
+
 <script type="module">
-    const getCurrentTimestamp = () => new Date().toISOString();
-
     const eventForm = document.getElementById('eventForm');
-    const addDateButton = document.getElementById('addDate');
+    const dateInput = document.getElementById('eventDates');
     const selectedDates = document.getElementById('selectedDates');
-    let datesArray = [];
 
-    addDateButton.addEventListener('click', () => {
-        const dateInput = document.getElementById('eventDates');
-        if (dateInput.value && !datesArray.includes(dateInput.value)) {
-            datesArray.push(dateInput.value);
-            updateDatesDisplay();
+    dateInput.addEventListener('change', () => {
+        if (dateInput.value) {
+            const dateValue = `${dateInput.value}\n`;
+            selectedDates.value += dateValue;
+            dateInput.value = ''; // Clear the input after adding
         }
     });
-
-    function updateDatesDisplay() {
-        selectedDates.innerHTML = '';
-        datesArray.forEach(date => {
-            const dateElement = document.createElement('div');
-            dateElement.textContent = date;
-            selectedDates.appendChild(dateElement);
-        });
-    }
 
     eventForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const eventName = formData.get('eventName');
         const eventMemo = formData.get('eventMemo');
+        const eventDates = selectedDates.value.trim().split('\n');
 
-        const eventCreateTime = getCurrentTimestamp();
+        const eventCreateTime = new Date().toISOString();
 
         const createResponse = await fetch('/api/createevent', {
             method: 'POST',
@@ -111,7 +74,6 @@ import Layout from '../../layouts/Layout.astro';
                 event_name: eventName,
                 event_memo: eventMemo,
                 event_create_time: eventCreateTime,
-
             })
         });
 
@@ -119,8 +81,6 @@ import Layout from '../../layouts/Layout.astro';
 
         if (createResponse.ok) {
             const eventNo = createData[0].event_no;
-            console.log('Event created:', eventNo);
-            // イベント日付の情報を登録する
             const dateResponse = await fetch(`/api/addeventdates/`, {
                 method: 'POST',
                 headers: {
@@ -128,12 +88,11 @@ import Layout from '../../layouts/Layout.astro';
                 },
                 body: JSON.stringify({
                     event_no: eventNo,
-                    event_dates: datesArray,
+                    event_dates: eventDates,
                 })
             });
 
             if (dateResponse.ok) {
-                // Redirect to a confirmation or details page
                 window.location.href = `/create/show-event-url-${eventNo}`;
             } else {
                 console.error('Error adding event dates:', await dateResponse.json());
