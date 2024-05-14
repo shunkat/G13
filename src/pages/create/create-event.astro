@@ -46,23 +46,22 @@ import Layout from '../../layouts/Layout.astro';
                             <span>8/9(水)21:00〜</span>
                             <br>
                         </div>
-                        <textarea
+                        <!-- <textarea
                             rows="10" cols="25"
                             id="eventDate"
                             name="eventDate"
                             placeholder="8/7(月)20:00〜\n8/8(火)20:00〜\n8/9(水)21:00〜"
                             required
-                        />
+                        /> -->
                     </div>
                     <div>
                         <span>↓日付をクリックすると日程に日時が入ります。</span><br>
-                        <input type="date" name="" id="">   
+                        <input type="date" id="eventDates" name="eventDates" />
                     </div>
                 </div>
 
             </div>
-            <input type="date" id="eventDates" name="eventDates" />
-            <textarea id="selectedDates" rows="5" cols="25" placeholder="追加された日程がここに表示されます"></textarea>
+            <textarea id="selectedDates" rows="5" cols="25" placeholder="8/7(月)20:00〜\n8/8(火)20:00〜\n8/9(水)21:00〜"></textarea>
         </div>
 
         <div class="button-conteiner">
