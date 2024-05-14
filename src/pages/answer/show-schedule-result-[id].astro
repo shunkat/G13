@@ -100,3 +100,23 @@ const { id } = Astro.params;
   }
   
 </style>
+
+
+<script type="module">
+  // イベント情報テーブルの情報を取得
+  window.onload = function(){
+
+    const pathname = window.location.pathname; 
+
+    const filename = pathname.substring(pathname.lastIndexOf("/")+1); 
+    // イベントNoを取得する
+    const event_no =  filename.substring(21);
+
+
+
+
+  };
+
+
+
+</script>
