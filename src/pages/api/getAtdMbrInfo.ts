@@ -5,8 +5,7 @@ import { supabase } from "../../lib/supabase";
 //ATTEND_MEMBER_INFO(日程参加者の情報)の取得
 
 export const POST: APIRoute = async ({ request }) => {
-    const body = await request.json();
-    const schedule_id = body.schedule_id;
+    const {schedule_id} = await request.json();
     const { data, error } = await supabase
       .from("attend_member_info")
       .select("*")

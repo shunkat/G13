@@ -5,11 +5,10 @@ import { supabase } from "../../lib/supabase";
 //EVENT_DATE_INFO(日程情報)の取得
 
 export const POST: APIRoute = async ({ request }) => {
-    const body  = await request.json();
-    const event_no = body.event_no;
+    const { event_no}  = await request.json();
     const { data, error } = await  supabase
       .from("event_date_info")
-      .select("*")
+      .select()
       .eq("event_no", event_no)
       
     if (error) {
@@ -20,6 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
         { status: 500 },
       );
     }
+
     
     return new Response(JSON.stringify(data));
-  };
+};
