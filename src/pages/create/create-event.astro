@@ -5,7 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 <Layout title="Create an Event">
 <main>
     <h2 class="title">調整くん</h2>
-    <form id="eventForm" class="form"> <!-- ここに id="eventForm" を追加 -->
+    <form id="eventForm" class="form">
         <div class="step-container">
             <div class="step1">
                 <div class="step-title">
@@ -59,11 +59,11 @@ import Layout from '../../layouts/Layout.astro';
                         <input type="date" name="" id="">   
                     </div>
                 </div>
+
             </div>
+            <input type="date" id="eventDates" name="eventDates" />
+            <textarea id="selectedDates" rows="5" cols="25" placeholder="追加された日程がここに表示されます"></textarea>
         </div>
-        
-        <!-- <label for="eventDates">Date Options:</label>
-        <input type="text" id="eventDates" name="eventDates" required /> -->
 
         <div class="button-conteiner">
             <button class="submit-button" type="submit">イベント作成</button>
@@ -124,24 +124,31 @@ import Layout from '../../layouts/Layout.astro';
 
   </style>
 
+
 <script type="module">
     const getCurrentTimestamp = () => new Date().toISOString();
-
     const eventForm = document.getElementById('eventForm');
+    const dateInput = document.getElementById('eventDates');
+    const selectedDates = document.getElementById('selectedDates');
+
+    dateInput.addEventListener('change', () => {
+        if (dateInput.value) {
+            const dateValue = `${dateInput.value}\n`;
+            selectedDates.value += dateValue;
+            dateInput.value = ''; // Clear the input after adding
+        }
+    });
 
     eventForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const eventName = formData.get('eventName');
         const eventMemo = formData.get('eventMemo');
-        const eventDates = formData.get('eventDates');
+        const eventDates = selectedDates.value.trim().split('\n');
 
-        // Example data for missing variables
-        const eventCreaterName = 'Anonymous User'; // Or pull from a cookie or user session
-        const eventCreateTime = getCurrentTimestamp();
-        const eventUpdateTime = eventCreateTime;
+        const eventCreateTime = new Date().toISOString();
 
-        const response = await fetch('/api/createevent', {
+        const createResponse = await fetch('/api/createevent', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -149,18 +156,32 @@ import Layout from '../../layouts/Layout.astro';
             body: JSON.stringify({
                 event_name: eventName,
                 event_memo: eventMemo,
-                event_create_time: eventCreateTime
+                event_create_time: eventCreateTime,
             })
         });
 
-        const data = await response.json();
-        console.log(data[0]);
+        const createData = await createResponse.json();
 
-        if (response.ok) {
-            // Redirect to a confirmation or details page (replace with appropriate URL structure)
-            window.location.href = `/create/show-event-url-${data[0].event_no}`;
+        if (createResponse.ok) {
+            const eventNo = createData[0].event_no;
+            const dateResponse = await fetch(`/api/addeventdates/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    event_no: eventNo,
+                    event_dates: eventDates,
+                })
+            });
+
+            if (dateResponse.ok) {
+                window.location.href = `/create/show-event-url-${eventNo}`;
+            } else {
+                console.error('Error adding event dates:', await dateResponse.json());
+            }
         } else {
-            console.error('Error inserting event:', data.error);
+            console.error('Error creating event:', createData.error);
         }
     });
 </script>
