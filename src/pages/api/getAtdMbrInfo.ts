@@ -2,14 +2,14 @@ import type { APIRoute } from "astro";
 import { supabase } from "../../lib/supabase";
 
 
-//EVENT_DATE_INFO(日程情報)の取得
+//ATTEND_MEMBER_INFO(日程参加者の情報)の取得
 
 export const GET: APIRoute = async ({ request }) => {
-    const { even_no} = await request.json();
+    const { schedule_id} = await request.json();
     const { data, error } = await supabase
-      .from("event_date_info")
+      .from("attedn_member_info")
       .select("*")
-      .eq("even_no",even_no)
+      .eq("schedule_id",schedule_id)
       
     if (error) {
       return new Response(

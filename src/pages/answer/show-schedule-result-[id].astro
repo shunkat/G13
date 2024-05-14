@@ -113,8 +113,15 @@ const { id } = Astro.params;
     const event_no =  filename.substring(21);
 
 
-
-
+    const getEventDateInfo = await fetch('/api/getEventDateInfo', {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no,
+            })
+        });
   };
 
 
