@@ -104,7 +104,7 @@ const { id } = Astro.params;
 
 <script type="module">
   // イベント情報テーブルの情報を取得
-  window.onload = function(){
+  // window.onload = function(){
 
     const pathname = window.location.pathname; 
 
@@ -112,17 +112,23 @@ const { id } = Astro.params;
     // イベントNoを取得する
     const event_no =  filename.substring(21);
 
-
-    const getEventDateInfo = await fetch('/api/getEventDateInfo', {
-            method: 'get',
+    // EVENT_DATE_INFO(日程情報)の取得
+    const getEventDateInfoResponse = await fetch('/api/getEventDateInfo', {
+            method: 'post',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              event_no: event_no,
+              event_no: event_no
             })
-        });
-  };
+    });
+
+    const getEventDateInfo_Data = getEventDateInfoResponse.json();
+
+
+
+
+  // };
 
 
 

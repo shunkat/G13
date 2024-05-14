@@ -4,12 +4,12 @@ import { supabase } from "../../lib/supabase";
 
 //EVENT_DATE_INFO(日程情報)の取得
 
-export const GET: APIRoute = async ({ request }) => {
-    const { even_no} = await request.json();
+export const POST: APIRoute = async ({ request }) => {
+    const { event_no} = await request.json();
     const { data, error } = await supabase
       .from("event_date_info")
       .select("*")
-      .eq("even_no",even_no)
+      .eq("event_no",event_no)
       
     if (error) {
       return new Response(
