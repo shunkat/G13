@@ -12,12 +12,6 @@ const { id } = Astro.params;
   </main>
 </Layout>
 
-<script>
-  document.getElementById('answerButton').addEventListener('click', () => {
-    const eventId = "{id}";
-    window.location.href = `/answer/show-schedule-result-${eventId}`;
-  });
-</script>
 
 <style>
   main {
@@ -36,3 +30,39 @@ const { id } = Astro.params;
     margin-bottom: 1em;
   }
 </style>
+
+
+<script>
+  document.getElementById('answerButton').addEventListener('click', () => {
+    const eventId = "{id}";
+    window.location.href = `/answer/show-schedule-result-${eventId}`;
+  });
+
+
+    // イベント情報テーブルの情報を取得
+  // window.onload = function(){
+
+    const pathname = window.location.pathname; 
+
+    const filename = pathname.substring(pathname.lastIndexOf("/")+1); 
+    // イベントNoを取得する
+    const event_no =  filename.substring(16);
+
+    // EVENT_DATE_INFO(日程情報)の取得
+    const getEventDateInfoResponse = await fetch('/api/getEventDateInfo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+
+    const getEventDateInfo_Data =  getEventDateInfoResponse.json();
+
+
+  // };
+
+</script>
