@@ -1,16 +1,22 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 const { id } = Astro.params;
+
+const events = [
+  { date: '3/28(土曜)13:00', yes: 1, maybe: 0, no: 0, comment: ''},
+  { date: '3/29(日曜)13:00', yes: 0, maybe: 0, no: 0, comment: ''},
+  { date: '4/3(土曜)13:00', yes: 0, maybe: 0, no: 0, comment: ''},
+  { date: '4/4(日曜)13:00', yes: 0, maybe: 0, no: 0, comment : ''},
+]
 ---
 
 <Layout title="出欠情報閲覧ページ">
-  <!-- MEMO: <p>ID: {id}</p> -->
   <main>
     <h2>調整くん</h2>
     <div class="item">
       <div class="sub-title">
         <h3>ソフトウェア開発部お花見</h3>
-        <div><button class="event_edit" type="submit">イベント編集</button></div>
+        <div><button class="event_edit" type="button">イベント編集</button></div>
       </div>
       <hr>
       <p>回答者数0人 あなたが幹事のイベントです</p>
@@ -22,48 +28,59 @@ const { id } = Astro.params;
     <div class="item">
       <h3>日にち候補</h3>
       <p>※各自の出欠状況を変更するには名前のリンクをクリックしてください。</p>
-      <table class="schedule-result">
-        <tr>
-          <td>日程</td>
-          <td>○</td>
-          <td>△</td>
-          <td>×</td>
-        </tr>
-        <tr>
-          <td>3/28(土)13:00</td>
-          <td>0人</td>
-          <td>0人</td>
-          <td>0人</td>
-        </tr>
-        <tr>
-          <td>3/29(日)13:00</td>
-          <td>0人</td>
-          <td>0人</td>
-          <td>0人</td>
-        </tr>
-        <tr>
-          <td>4/3(土)13:00</td>
-          <td>0人</td>
-          <td>0人</td>
-          <td>0人</td>
-        </tr>
-        <tr>
-          <td>4/4(日)13:00</td>
-          <td>0人</td>
-          <td>0人</td>
-          <td>0人</td>
-        </tr>
-        </tr>
-        <tr>
-          <td>コメント</td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-    </table>
+      <div class="table-container">
+        <table class="schedule-result">
+          <tr>
+            <td>日程</td>
+            <td align="center">○</td>
+            <td align="center">△</td>
+            <td align="center">×</td>
+            <td align="center">佐藤</td>
+          </tr>
+          <tr>
+            <td>3/28(土)13:00</td>
+            <td align="center">1人</td>
+            <td align="center">0人</td>
+            <td align="center">0人</td>
+            <td align="center">○</td>
+          </tr>
+          <tr>
+            <td>3/29(日)13:00</td>
+            <td align="center">0人</td>
+            <td align="center">0人</td>
+            <td align="center">0人</td>
+            <td align="center">×</td>
+          </tr>
+          <tr>
+            <td>4/3(土)13:00</td>
+            <td align="center">0人</td>
+            <td align="center">0人</td>
+            <td align="center">0人</td>
+            <td align="center">×</td>
+          </tr>
+          <tr>
+            <td>4/4(日)13:00</td>
+            <td align="center">0人</td>
+            <td align="center">0人</td>
+            <td align="center">0人</td>
+            <td align="center">×</td>
+          </tr>
+          <tr>
+            <td>コメント</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+     
     </div>
      <br>
-     <button class="submit-button" type="submit">出欠を入力する</button>
+     <div class="button-conteiner"> 
+       <button class="submit-button" type="button">出欠を入力する</button>
+     </div>
+
   </main>  
 </Layout>
 
@@ -75,12 +92,13 @@ const { id } = Astro.params;
     max-width: calc(100% - 2rem);
     background-color: white;
     color: black;
-    /* font-size: 20px;
-    line-height: 1.6; */
   }
-
   table, tr, td {
-    border: 1px solid;
+    border: 1px solid; 
+  }
+  table {
+    width: 50%;
+    height: auto;
   }
   h3, p {
     margin: 0;
@@ -91,12 +109,24 @@ const { id } = Astro.params;
     justify-content: space-between;
     align-items: center;
   }
-
-  .item{
+  .item {
     padding-bottom: 24px;
   }
-  .schedule-result{
-    margin-top: 8px;
+  .table-container {
+    display: flex;
+    justify-content: center;
   }
-  
+  .schedule-result {
+    margin-top: 8px;
+  }  
+  .button-conteiner {
+    text-align: center;
+  }
+  .submit-button {
+    border-radius: 4px;
+    border: 1px solid ;
+    padding: 4px 48px;
+    font-size: 18px;
+    background-color: rgb(232, 231, 231);
+  }
 </style>
