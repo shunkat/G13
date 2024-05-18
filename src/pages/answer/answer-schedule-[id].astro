@@ -14,7 +14,9 @@ const { id } = Astro.params;
     <p>絵文字は使用出来ません</p>
     <input type="text" id="name">
     <p>日にち候補</p>
-    <div id="date_option">
+    <div id="date_option_container">
+
+    </div>
     <p>コメント</p>
     <input type="text" id="comment">
 
@@ -73,11 +75,34 @@ const { id } = Astro.params;
     const EventDateInfo = await getEventDateInfoResponse.json();
 
     // debug
-    console.log(EventDateInfo);
+    // console.log(EventDateInfo);
 
-    //作成中
-    EventDateInfo.array.forEach(element => {
-      
+    let date_option_container = document.getElementById("date_option_container");
+
+    EventDateInfo.forEach(function(record){
+        // console.log(record);
+        // console.log(record["schedule_name"]);
+        // let element = document.createElement("div");
+
+        let para = document.createElement("p");
+        let node = document.createTextNode(record["schedule_name"]);
+        
+        let apply_button = document.createElement("button");
+        apply_button.innerText = "〇";
+
+        let unkown_button = document.createElement("button");
+        unkown_button.innerText = "△";
+
+        let deny_button = document.createElement("button");
+        deny_button.innerText = "×";
+
+
+        para.appendChild(node);
+        para.appendChild(apply_button);
+        para.appendChild(unkown_button);
+        para.appendChild(deny_button);
+
+        date_option_container.appendChild(para);
     });
 
 
