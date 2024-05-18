@@ -7,7 +7,17 @@ const { id } = Astro.params;
   <main>
     <h1>日程回答ページ</h1>
     <p>ID: {id}</p>
-    <p>日程回答部分</p>
+    <!-- <p>日程回答部分</p> -->
+    <p>出欠を入力する</p>
+    <hr>
+    <p>名前</p>
+    <p>絵文字は使用出来ません</p>
+    <input type="text" id="name">
+    <p>日にち候補</p>
+    <div id="date_option">
+    <p>コメント</p>
+    <input type="text" id="comment">
+
     <button id="answerButton">回答</button>
   </main>
 </Layout>
@@ -33,6 +43,7 @@ const { id } = Astro.params;
 
 
 <script>
+
   document.getElementById('answerButton').addEventListener('click', () => {
     const eventId = "{id}";
     window.location.href = `/answer/show-schedule-result-${eventId}`;
@@ -40,7 +51,7 @@ const { id } = Astro.params;
 
 
     // イベント情報テーブルの情報を取得
-  // window.onload = function(){
+  window.onload = async function(){
 
     const pathname = window.location.pathname; 
 
@@ -49,7 +60,7 @@ const { id } = Astro.params;
     const event_no =  filename.substring(16);
 
     // EVENT_DATE_INFO(日程情報)の取得
-    const getEventDateInfoResponse = await fetch('/api/getEventDateInfo', {
+    const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -59,10 +70,20 @@ const { id } = Astro.params;
             })
     });
 
+    const EventDateInfo = await getEventDateInfoResponse.json();
 
-    const getEventDateInfo_Data =  getEventDateInfoResponse.json();
+    // debug
+    console.log(EventDateInfo);
+
+    //作成中
+    EventDateInfo.array.forEach(element => {
+      
+    });
 
 
-  // };
+
+
+
+  };
 
 </script>
