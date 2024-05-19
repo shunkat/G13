@@ -8,6 +8,9 @@ const { id } = Astro.params;
     <h1>日程回答ページ</h1>
     <p>ID: {id}</p>
     <!-- <p>日程回答部分</p> -->
+    <div id="date_list_container">
+      
+    </div>
     <p>出欠を入力する</p>
     <hr>
     <p>名前</p>
@@ -75,14 +78,15 @@ const { id } = Astro.params;
     const EventDateInfo = await getEventDateInfoResponse.json();
 
     // debug
-    // console.log(EventDateInfo);
+    // console.log(EventDateInfo.length);
 
+
+    //日にち候補の生成
     let date_option_container = document.getElementById("date_option_container");
 
     EventDateInfo.forEach(function(record){
         // console.log(record);
         // console.log(record["schedule_name"]);
-        // let element = document.createElement("div");
 
         let para = document.createElement("p");
         let node = document.createTextNode(record["schedule_name"]);
@@ -106,9 +110,35 @@ const { id } = Astro.params;
     });
 
 
-
+    createTable(EventDateInfo);
 
 
   };
+
+  // 日にち候補一覧の作成
+  function createTable(EventDateInfo){
+
+    let date_list_container = document.getElementById("date_list_container");
+
+    let table = '<table border=1 width="500">';
+
+    let title = '<tr><td>日程</td><td>〇</td><td>△</td><td>×</td></tr>'
+      
+    table += title;
+
+    for(let i=0; i < EventDateInfo.length; i++){
+        table += '<tr>';
+        for(let j = 0; j< 4;j++ ){
+          if(j == 0)
+          {            
+            table += "<td>" + EventDateInfo[i]["schedule_name"]+ "</td>";
+          }
+        }
+
+    }
+    table += '</table>';
+    date_list_container.innerHTML = table;
+
+  }
 
 </script>
