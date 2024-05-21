@@ -84,7 +84,7 @@ const { id } = Astro.params;
 
     EventDateInfo.forEach(function(record){
         // console.log(record);
-        // console.log(record["schedule_name"]);
+        console.log(record["schedule_name"]);
 
         let para = document.createElement("p");
         let node = document.createTextNode(record["schedule_name"]);
