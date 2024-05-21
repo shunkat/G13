@@ -78,3 +78,12 @@ const { id } = Astro.params;
     background-color: rgb(232, 231, 231).
   }
 </style>
+<script>
+  const id = document.getElementById("id-transfer").getAttribute("data-message");
+
+  document.getElementById('submit-button').addEventListener('click', () => {
+    const eventId = id;
+    window.location.href = `/answer/answer-schedule-${eventId}`;
+  });
+
+</script>
