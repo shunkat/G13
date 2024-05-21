@@ -2,85 +2,34 @@
 import Layout from '../../layouts/Layout.astro';
 const { id } = Astro.params;
 
-const events = [
-  { date: '3/28(土曜)13:00', yes: 1, maybe: 0, no: 0, comment: ''},
-  { date: '3/29(日曜)13:00', yes: 0, maybe: 0, no: 0, comment: ''},
-  { date: '4/3(土曜)13:00', yes: 0, maybe: 0, no: 0, comment: ''},
-  { date: '4/4(日曜)13:00', yes: 0, maybe: 0, no: 0, comment : ''},
-]
 ---
 
 <Layout title="出欠情報閲覧ページ">
-  <main>
+  <main id="id-transfer" data-message={id}>
     <h2>調整くん</h2>
     <div class="item">
       <div class="sub-title">
-        <h3>ソフトウェア開発部お花見</h3>
-        <div><button class="event_edit" type="button">イベント編集</button></div>
+        <h3 id="event-name">イベント名を取得中...</h3>
       </div>
       <hr>
-      <p>回答者数0人 あなたが幹事のイベントです</p>
     </div>
     <div class="item">
       <h3>イベントの詳細説明</h3>
-      <p>ソフト開発部でお花見をしましょう。3/20までにご都合入力ください!</p>
+      <p id="event-memo">イベント説明を取得中...</p>
     </div>
     <div class="item">
       <h3>日にち候補</h3>
       <p>※各自の出欠状況を変更するには名前のリンクをクリックしてください。</p>
       <div class="table-container">
-        <table class="schedule-result">
-          <tr>
-            <td>日程</td>
-            <td align="center">○</td>
-            <td align="center">△</td>
-            <td align="center">×</td>
-            <td align="center">佐藤</td>
-          </tr>
-          <tr>
-            <td>3/28(土)13:00</td>
-            <td align="center">1人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">○</td>
-          </tr>
-          <tr>
-            <td>3/29(日)13:00</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">×</td>
-          </tr>
-          <tr>
-            <td>4/3(土)13:00</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">×</td>
-          </tr>
-          <tr>
-            <td>4/4(日)13:00</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">×</td>
-          </tr>
-          <tr>
-            <td>コメント</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </table>
+        <div id="date_list_container">
+          <div id="date_option_container"></div>
+        </div>
       </div>
-     
     </div>
      <br>
      <div class="button-conteiner"> 
-       <button class="submit-button" type="button">出欠を入力する</button>
+      <button id="submit-button" type="button">出欠を入力する</button>
      </div>
-
   </main>  
 </Layout>
 
