@@ -7,17 +7,22 @@ const { id } = Astro.params;
   <main>
     <h1>日程回答ページ</h1>
     <p>ID: {id}</p>
-    <p>日程回答部分</p>
+    <!-- <p>日程回答部分</p> -->
+    <div id="date_list_container"></div>
+    <p>出欠を入力する</p>
+    <hr>
+    <p>名前</p>
+    <p>絵文字は使用出来ません</p>
+    <input type="text" id="name">
+    <p>日にち候補</p>
+    <div id="date_option_container"></div>
+    <p>コメント</p>
+    <input type="text" id="comment">
+
     <button id="answerButton">回答</button>
   </main>
 </Layout>
 
-<script>
-  document.getElementById('answerButton').addEventListener('click', () => {
-    const eventId = "{id}";
-    window.location.href = `/answer/show-schedule-result-${eventId}`;
-  });
-</script>
 
 <style>
   main {
@@ -36,3 +41,123 @@ const { id } = Astro.params;
     margin-bottom: 1em;
   }
 </style>
+
+
+<script>
+
+  document.getElementById('answerButton').addEventListener('click', () => {
+    const eventId = "{id}";
+    window.location.href = `/answer/show-schedule-result-${eventId}`;
+  });
+
+
+    // イベント情報テーブルの情報を取得
+  window.onload = async function(){
+
+    const pathname = window.location.pathname; 
+
+    const filename = pathname.substring(pathname.lastIndexOf("/")+1); 
+    // イベントNoを取得する
+    const event_no =  filename.substring(16);
+
+    // EVENT_DATE_INFO(日程情報)の取得
+    const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const EventDateInfo = await getEventDateInfoResponse.json();
+
+    // debug
+    // console.log(EventDateInfo.length);
+
+
+    //日にち候補の生成
+    let date_option_container = document.getElementById("date_option_container");
+
+    let i = 0;
+
+    EventDateInfo.forEach(function(record){
+        // console.log(record);
+        console.log(record["schedule_name"]);
+
+        let para = document.createElement("p");
+        let node = document.createTextNode(record["schedule_name"]);
+
+        
+        let apply_checkbox = document.createElement("INPUT");
+        apply_checkbox.setAttribute("type", "checkbox");
+        let apply_label = document.createElement("label");
+        apply_label.innerText = "○";
+
+
+        let unkown_checkbox = document.createElement("INPUT");
+        unkown_checkbox.setAttribute("type", "checkbox");
+        let unkown_label = document.createElement("label");
+        unkown_label.innerText = "△";
+
+
+        let deny_checkbox = document.createElement("INPUT");
+        deny_checkbox.setAttribute("type", "checkbox");
+        let deny_label = document.createElement("label");
+        deny_label.innerText = "×";
+
+
+        para.appendChild(node);
+        
+
+        para.appendChild(apply_label);
+        para.appendChild(apply_checkbox);
+        
+        para.appendChild(unkown_label);
+        para.appendChild(unkown_checkbox);
+
+        para.appendChild(deny_label);
+        para.appendChild(deny_checkbox);
+
+        date_option_container.appendChild(para);
+    });
+
+    // 日にち候補一覧の作成
+    createTable(EventDateInfo);
+
+
+  };
+
+  // 日にち候補一覧の作成
+  function createTable(EventDateInfo){
+
+    let date_list_container = document.getElementById("date_list_container");
+
+    let table = '<table border=1 width="500">';
+
+    let title = '<tr><td>日程</td><td>○</td><td>△</td><td>×</td></tr>'
+      
+    table += title;
+
+    for(let i=0; i < EventDateInfo.length; i++){
+        table += '<tr>';
+        for(let j = 0; j< 3; j++ ){
+          if(j == 0){
+            table += "<td>" + EventDateInfo[i]["schedule_name"]+ "</td>";
+          }
+
+          table += "<td>" +  + "</td>";
+        }
+    }
+
+    let command = '<tr><td>コメント</td><td></td><td></td><td></td></tr>'
+
+    table += command;
+
+    table += '</table>';
+    date_list_container.innerHTML = table;
+
+  }
+
+</script>

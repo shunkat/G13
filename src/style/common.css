@@ -1,0 +1,30 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: calc(50% - 150px);
+    margin-right: calc(50% - 150px);
+
+ } 
+
+.center{
+    display: flex;
+    position: absolute;
+    left: 50%;
+    margin-left: calc(50% - 150px);
+    margin-right: calc(50% - 150px);
+
+}
+
+.main{
+
+    background-color: #ffffff;
+    width: 600px;
+    margin: auto;
+    top: 0;
+    left: 50%;
+    right: 50%;
+    bottom: 0;
+    /* transform: translate(-50%,-50%); */
+
+}
