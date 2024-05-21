@@ -8,6 +8,12 @@ const { id } = Astro.params;
     <h1>日程修正ページ</h1>
     <p>ID: {id}</p>
     <p>日程修正部分</p>
+    <div>
+            <label for="name">名前</label>
+            <input type="text" id="name" name="name">
+            <h6>※絵文字は使用できません</h6>
+    </div>
+
     <form>
       <label for="modifiedSchedule">修正した日程:</label>
       <input type="text" id="modifiedSchedule" name="modifiedSchedule" required />
