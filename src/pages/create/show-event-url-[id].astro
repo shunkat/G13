@@ -1,4 +1,6 @@
 ---
+
+
 import Layout from '../../layouts/Layout.astro';
 // idを受け取る
 const { id } = Astro.params;
@@ -7,9 +9,15 @@ const { id } = Astro.params;
 
 <Layout title={`Schedule ID: ${id}`}>
   <main>
-    <h1>Schedule ID: {id}</h1>
-    <p>Answer your schedule at the following URL:</p>
+    <!-- ここから下を修正して、必要な要素を追加していって下さい -->
+     <h2>イベント新規作成</h2>
+      <p>イベントが作成されました。以下のURLをメール等を使ってみんなに知らせてあげよう。以降、このURLページにて各自の出欠情報を入力してもらいます。</p>
+    
+    <p>回答用URLはこちらです</p>
+
+    <!-- /answer/answer-schedule-{id}が表示したいurl本体です。これをページのどこかに表示してあげて下さい -->
     <a href={`/answer/answer-schedule-${id}`}>/answer/answer-schedule-{id}</a>
+    <!-- ここから上を修正して、必要な要素を追加していって下さい -->
   </main>
 </Layout>
 
