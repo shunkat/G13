@@ -2,85 +2,34 @@
 import Layout from '../../layouts/Layout.astro';
 const { id } = Astro.params;
 
-const events = [
-  { date: '3/28(土曜)13:00', yes: 1, maybe: 0, no: 0, comment: ''},
-  { date: '3/29(日曜)13:00', yes: 0, maybe: 0, no: 0, comment: ''},
-  { date: '4/3(土曜)13:00', yes: 0, maybe: 0, no: 0, comment: ''},
-  { date: '4/4(日曜)13:00', yes: 0, maybe: 0, no: 0, comment : ''},
-]
 ---
 
 <Layout title="出欠情報閲覧ページ">
-  <main>
+  <main id="id-transfer" data-message={id}>
     <h2>調整くん</h2>
     <div class="item">
       <div class="sub-title">
-        <h3>ソフトウェア開発部お花見</h3>
-        <div><button class="event_edit" type="button">イベント編集</button></div>
+        <h3 id="event-name">イベント名を取得中...</h3>
       </div>
       <hr>
-      <p>回答者数0人 あなたが幹事のイベントです</p>
     </div>
     <div class="item">
       <h3>イベントの詳細説明</h3>
-      <p>ソフト開発部でお花見をしましょう。3/20までにご都合入力ください!</p>
+      <p id="event-memo">イベント説明を取得中...</p>
     </div>
     <div class="item">
       <h3>日にち候補</h3>
       <p>※各自の出欠状況を変更するには名前のリンクをクリックしてください。</p>
       <div class="table-container">
-        <table class="schedule-result">
-          <tr>
-            <td>日程</td>
-            <td align="center">○</td>
-            <td align="center">△</td>
-            <td align="center">×</td>
-            <td align="center">佐藤</td>
-          </tr>
-          <tr>
-            <td>3/28(土)13:00</td>
-            <td align="center">1人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">○</td>
-          </tr>
-          <tr>
-            <td>3/29(日)13:00</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">×</td>
-          </tr>
-          <tr>
-            <td>4/3(土)13:00</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">×</td>
-          </tr>
-          <tr>
-            <td>4/4(日)13:00</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">0人</td>
-            <td align="center">×</td>
-          </tr>
-          <tr>
-            <td>コメント</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </table>
+        <div id="date_list_container">
+          <div id="date_option_container"></div>
+        </div>
       </div>
-     
     </div>
-     <br>
-     <div class="button-conteiner"> 
-       <button class="submit-button" type="button">出欠を入力する</button>
-     </div>
-
+    <br>
+    <div class="button-conteiner"> 
+      <button id="submit-button" type="button">出欠を入力する</button>
+    </div>
   </main>  
 </Layout>
 
@@ -103,7 +52,6 @@ const events = [
   h3, p {
     margin: 0;
   } 
-
   .sub-title {
     display: flex;
     justify-content: space-between;
@@ -122,11 +70,215 @@ const events = [
   .button-conteiner {
     text-align: center;
   }
-  .submit-button {
+  #submit-button {
     border-radius: 4px;
-    border: 1px solid ;
+    border: 1px solid;
     padding: 4px 48px;
     font-size: 18px;
     background-color: rgb(232, 231, 231);
   }
 </style>
+<script>
+  const id = document.getElementById("id-transfer").getAttribute("data-message");
+
+  document.getElementById('submit-button').addEventListener('click', () => {
+    const eventId = id;
+    window.location.href = `/answer/answer-schedule-${eventId}`;
+  });
+
+  window.onload = async function() {
+    try {
+      const event_no = id;
+
+      // EVENT_INFOテーブルからイベント情報を取得
+      const getEventInfoResponse = await fetch('/api/geteventinfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event_no })
+      });
+
+      if (!getEventInfoResponse.ok) {
+        throw new Error('Failed to fetch event info');
+      }
+
+      let eventInfo = await getEventInfoResponse.json();
+      eventInfo = eventInfo[0];
+      document.getElementById('event-name').innerText = eventInfo.event_name;
+      document.getElementById('event-memo').innerText = eventInfo.event_memo;
+
+      // EVENT_DATE_INFO(日程情報)の取得
+      const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event_no })
+      });
+
+      if (!getEventDateInfoResponse.ok) {
+        throw new Error('Failed to fetch event date info');
+      }
+
+      const EventDateInfo = await getEventDateInfoResponse.json();
+
+      // EVENT_MEMBERテーブルからメンバー情報を取得
+      const getEventMemberResponse = await fetch('/api/geteventmember', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event_no })
+      });
+
+      if (!getEventMemberResponse.ok) {
+        throw new Error('Failed to fetch event member');
+      }
+
+      const EventMemberInfo = await getEventMemberResponse.json();
+
+      // ATTEND_MEMBER_INFOテーブルから出欠情報を取得
+      const getAttendMemberInfoResponse = await fetch('/api/getattendmemberinfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event_no })
+      });
+
+      if (!getAttendMemberInfoResponse.ok) {
+        throw new Error('Failed to fetch attend member info');
+      }
+
+      const AttendMemberInfo = await getAttendMemberInfoResponse.json();
+
+      const attendanceSummary = summarizeAttendance(EventDateInfo, AttendMemberInfo);
+      createDateOptions(EventDateInfo);
+      createTable(EventDateInfo, EventMemberInfo, AttendMemberInfo, attendanceSummary);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  function summarizeAttendance(EventDateInfo, AttendMemberInfo) {
+    const summary = EventDateInfo.map(dateInfo => {
+      return {
+        schedule_id: dateInfo.schedule_id,
+        yes_count: 0,
+        maybe_count: 0,
+        no_count: 0
+      };
+    });
+
+    AttendMemberInfo.forEach(attendance => {
+      const dateSummary = summary.find(s => s.schedule_id === attendance.schedule_id);
+      if (dateSummary) {
+        if (attendance.member_attendance === "0") {
+          dateSummary.yes_count++;
+        } else if (attendance.member_attendance === "1") {
+          dateSummary.maybe_count++;
+        } else if (attendance.member_attendance === "2") {
+          dateSummary.no_count++;
+        }
+      }
+    });
+
+    return summary;
+  }
+
+  function createDateOptions(EventDateInfo) {
+    let date_option_container = document.getElementById("date_option_container");
+
+    EventDateInfo.forEach(function(record) {
+      let para = document.createElement("p");
+      let node = document.createTextNode(record["schedule_name"]);
+
+      let apply_checkbox = document.createElement("INPUT");
+      apply_checkbox.setAttribute("type", "checkbox");
+      let apply_label = document.createElement("label");
+      apply_label.innerText = "○";
+
+      let unknown_checkbox = document.createElement("INPUT");
+      unknown_checkbox.setAttribute("type", "checkbox");
+      let unknown_label = document.createElement("label");
+      unknown_label.innerText = "△";
+
+      let deny_checkbox = document.createElement("INPUT");
+      deny_checkbox.setAttribute("type", "checkbox");
+      let deny_label = document.createElement("label");
+      deny_label.innerText = "×";
+
+      para.appendChild(node);
+      para.appendChild(apply_label);
+      para.appendChild(apply_checkbox);
+      para.appendChild(unknown_label);
+      para.appendChild(unknown_checkbox);
+      para.appendChild(deny_label);
+      para.appendChild(deny_checkbox);
+
+      date_option_container.appendChild(para);
+    });
+  }
+
+  function createTable(EventDateInfo, EventMemberInfo, AttendMemberInfo, attendanceSummary) {
+    let date_list_container = document.getElementById("date_list_container");
+
+    let table = '<table border="1" width="500">';
+    let title = '<tr><td>日程</td><td>○</td><td>△</td><td>×</td>';
+    
+    // メンバー名を追加
+    EventMemberInfo.forEach(member => {
+      title += `<td>${member.member_name}</td>`;
+    });
+    
+    title += '</tr>';
+    table += title;
+
+    EventDateInfo.forEach(info => {
+      table += '<tr>';
+      const summary = attendanceSummary.find(s => s.schedule_id === info.schedule_id);
+      table += `<td>${info.schedule_name}</td>`;
+      table += `<td>${summary.yes_count}</td>`;
+      table += `<td>${summary.maybe_count}</td>`;
+      table += `<td>${summary.no_count}</td>`;
+      
+      // 各メンバーの出欠状況を追加
+      EventMemberInfo.forEach(member => {
+        console.log(info.schedule_id, member.member_id);
+        const memberAttendance = AttendMemberInfo.find(attendance => 
+          attendance.schedule_id == info.schedule_id && 
+          attendance.member_id == member.member_id
+        );
+
+        if (memberAttendance) {
+          if (memberAttendance.member_attendance === "0") {
+            table += '<td>◯</td>';
+          } else if (memberAttendance.member_attendance === "1") {
+            table += '<td>△</td>';
+          } else if (memberAttendance.member_attendance === "2") {
+            table += '<td>×</td>';
+          } else {
+            table += '<td></td>';
+          }
+        } else {
+          table += '<td></td>';
+        }
+      });
+
+      table += '</tr>';
+    });
+
+    let comment = '<tr><td>コメント</td><td colspan="3"></td>';
+    
+    // メンバーごとのコメント列を追加
+    EventMemberInfo.forEach(member => {
+      comment += `<td>${member.comment || ''}</td>`;
+    });
+
+    comment += '</tr>';
+    table += comment;
+    table += '</table>';
+    date_list_container.innerHTML = table;
+  }
+</script>
