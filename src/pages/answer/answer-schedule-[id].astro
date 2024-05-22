@@ -87,38 +87,31 @@ const { id } = Astro.params;
         console.log(record["schedule_name"]);
 
         let para = document.createElement("p");
+        let span = document.createElement("span");
+        span.style.width = "150px";
+        span.style.display= "inline-block";
         let node = document.createTextNode(record["schedule_name"]);
 
-        
-        let apply_checkbox = document.createElement("INPUT");
-        apply_checkbox.setAttribute("type", "checkbox");
-        let apply_label = document.createElement("label");
-        apply_label.innerText = "○";
+        let pulldownList = document.createElement("select");
+        let apply_option = document.createElement("option");
+        apply_option.setAttribute("value", "1");
+        apply_option.text="○";
+        let unkown_option = document.createElement("option");
+        unkown_option.setAttribute("value", "2");
+        unkown_option.text= "△";
+        let deny_option = document.createElement("option");
+        deny_option.setAttribute("value", "3");
+        deny_option.text = "×";
+
+        span.appendChild(node);
+
+        pulldownList.add(apply_option);
+        pulldownList.appendChild(unkown_option);
+        pulldownList.appendChild(deny_option);
 
 
-        let unkown_checkbox = document.createElement("INPUT");
-        unkown_checkbox.setAttribute("type", "checkbox");
-        let unkown_label = document.createElement("label");
-        unkown_label.innerText = "△";
-
-
-        let deny_checkbox = document.createElement("INPUT");
-        deny_checkbox.setAttribute("type", "checkbox");
-        let deny_label = document.createElement("label");
-        deny_label.innerText = "×";
-
-
-        para.appendChild(node);
-        
-
-        para.appendChild(apply_label);
-        para.appendChild(apply_checkbox);
-        
-        para.appendChild(unkown_label);
-        para.appendChild(unkown_checkbox);
-
-        para.appendChild(deny_label);
-        para.appendChild(deny_checkbox);
+        para.appendChild(span);       
+        para.appendChild(pulldownList);
 
         date_option_container.appendChild(para);
     });
