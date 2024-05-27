@@ -7,12 +7,28 @@ const { id } = Astro.params;
   <main>
     <h1>日程修正ページ</h1>
     <p>ID: {id}</p>
-    <p>日程修正部分</p>
-    <form>
-      <label for="modifiedSchedule">修正した日程:</label>
-      <input type="text" id="modifiedSchedule" name="modifiedSchedule" required />
-      <button type="submit">保存</button>
-    </form>
+    <!-- <p>日程修正部分</p> -->
+    <div style="margin: auto;text-align: left;" >
+      <h3>イベント名</h3>
+      <div id="event_name"></div>
+      <hr>
+      <h3>イベント詳細説明</h3>
+      <div id="event_detail"></div>
+      <hr>
+      <h3>日にち候補</h3>
+      <h5>※各自の出欠状況を変更するには名前のリンクをクリックしてください。</h5>
+      <div id="date_list_container"></div>
+      <p>出欠を入力する</p>
+      <hr>
+      <label>名前</label><br/>
+      <label>絵文字は使用出来ません</label><br/>
+      <input type="text" id="name" style="width:500px"><br/>
+      <label>日にち候補</label><br/>
+      <div id="date_option_container" style="text-align: center;"></div>
+      <label>コメント</label><br/>
+      <input type="text" id="comment" style="width:500px">
+      <p><button id="updateButton">更新</button></p>
+    </div>
   </main>
 </Layout>
 
@@ -33,3 +49,138 @@ const { id } = Astro.params;
     margin-bottom: 1em;
   }
 </style>
+
+<script>
+    window.onload = async function(){
+
+const pathname = window.location.pathname; 
+
+const filename = pathname.substring(pathname.lastIndexOf("/")+1); 
+// イベントNoを取得する
+const event_no =  filename.substring(16);
+
+// EVENT_DATE_INFO(日程情報)の取得
+const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event_no: event_no
+        })
+});
+
+const EventDateInfo = await getEventDateInfoResponse.json();
+
+// debug
+// console.log(EventDateInfo.length);
+
+// EVENT_INFO(イベント情報)の取得
+const geteventinfo = await fetch('/api/geteventinfo',{
+  method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event_no: event_no
+        })
+});
+
+const EventInfo = await geteventinfo.json();
+
+console.log(EventInfo);
+
+let event_name = document.getElementById("event_name");
+event_name.innerText = EventInfo[0]["event_name"];
+
+let event_detail = document.getElementById("event_detail");
+event_detail.innerText = EventInfo[0]["event_memo"];
+
+
+//-------------------------
+
+
+//日にち候補の生成
+let date_option_container = document.getElementById("date_option_container");
+
+let i = 0;
+
+EventDateInfo.forEach(function(record){
+    // console.log(record);
+    // console.log(record["schedule_name"]);
+
+    let para = document.createElement("p");
+    let span = document.createElement("span");
+    span.style.width = "300px";
+    span.style.display= "inline-block";
+    let node = document.createTextNode(record["schedule_name"]);
+
+    let pulldownList = document.createElement("select");
+    pulldownList.setAttribute("id", "select-id-"+i.toString());
+
+    let apply_option = document.createElement("option");
+    apply_option.setAttribute("value", "1");
+    apply_option.text="○";
+    let unkown_option = document.createElement("option");
+    unkown_option.setAttribute("value", "2");
+    unkown_option.text= "△";
+    let deny_option = document.createElement("option");
+    deny_option.setAttribute("value", "3");
+    deny_option.text = "×";
+
+    span.appendChild(node);
+
+    pulldownList.add(apply_option);
+    pulldownList.appendChild(unkown_option);
+    pulldownList.appendChild(deny_option);
+
+
+    para.appendChild(span);       
+    para.appendChild(pulldownList);
+
+    date_option_container.appendChild(para);
+
+    i++;
+});
+
+// 日にち候補一覧の作成
+createTable(EventDateInfo);
+
+
+};
+
+// 日にち候補一覧の作成
+function createTable(EventDateInfo){
+
+let date_list_container = document.getElementById("date_list_container");
+
+let table = '<table border=1 width="500">';
+
+let title = '<tr><td>日程</td><td>○</td><td>△</td><td>×</td></tr>'
+  
+table += title;
+
+for(let i=0; i < EventDateInfo.length; i++){
+    table += '<tr>';
+    for(let j = 0; j< 3; j++ ){
+      if(j == 0){
+        table += "<td>" + EventDateInfo[i]["schedule_name"]+ "</td>";
+      }
+
+      table += "<td>" +  + "</td>";
+    }
+}
+
+let command = '<tr><td>コメント</td><td></td><td></td><td></td></tr>'
+
+table += command;
+
+table += '</table>';
+date_list_container.innerHTML = table;
+
+}
+
+// 出欠状況DBへ登録
+
+
+</script>
