@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 const { id } = Astro.params;
-
 ---
 
 <Layout title="出欠情報閲覧ページ">
@@ -227,9 +226,9 @@ const { id } = Astro.params;
     let table = '<table border="1" width="500">';
     let title = '<tr><td>日程</td><td>○</td><td>△</td><td>×</td>';
     
-    // メンバー名を追加
+    // メンバー名を追加（リンクに変更）
     EventMemberInfo.forEach(member => {
-      title += `<td>${member.member_name}</td>`;
+      title += `<td><a href="./modify-schedule-${id}/${member.member_id}">${member.member_name}</a></td>`;
     });
     
     title += '</tr>';
@@ -245,7 +244,6 @@ const { id } = Astro.params;
       
       // 各メンバーの出欠状況を追加
       EventMemberInfo.forEach(member => {
-        console.log(info.schedule_id, member.member_id);
         const memberAttendance = AttendMemberInfo.find(attendance => 
           attendance.schedule_id == info.schedule_id && 
           attendance.member_id == member.member_id
