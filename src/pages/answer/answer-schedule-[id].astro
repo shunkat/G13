@@ -8,18 +8,27 @@ const { id } = Astro.params;
     <h1>日程回答ページ</h1>
     <p>ID: {id}</p>
     <!-- <p>日程回答部分</p> -->
-    <div id="date_list_container"></div>
-    <p>出欠を入力する</p>
-    <hr>
-    <p>名前</p>
-    <p>絵文字は使用出来ません</p>
-    <input type="text" id="name">
-    <p>日にち候補</p>
-    <div id="date_option_container"></div>
-    <p>コメント</p>
-    <input type="text" id="comment">
-
-    <button id="answerButton">回答</button>
+    <div style="margin: auto;text-align: left;" >
+      <h3>イベント名</h3>
+      <div id="event_name"></div>
+      <hr>
+      <h3>イベント詳細説明</h3>
+      <div id="event_detail"></div>
+      <hr>
+      <h3>日にち候補</h3>
+      <h5>※各自の出欠状況を変更するには名前のリンクをクリックしてください。</h5>
+      <div id="date_list_container"></div>
+      <p>出欠を入力する</p>
+      <hr>
+      <label>名前</label><br/>
+      <label>絵文字は使用出来ません</label><br/>
+      <input type="text" id="name" style="width:500px"><br/>
+      <label>日にち候補</label><br/>
+      <div id="date_option_container" style="text-align: center;"></div>
+      <label>コメント</label><br/>
+      <input type="text" id="comment" style="width:500px">
+      <p><button id="answerButton">回答</button></p>
+    </div>
   </main>
 </Layout>
 
@@ -51,7 +60,7 @@ const { id } = Astro.params;
   });
 
 
-    // イベント情報テーブルの情報を取得
+    // 画面初期表示
   window.onload = async function(){
 
     const pathname = window.location.pathname; 
@@ -76,6 +85,30 @@ const { id } = Astro.params;
     // debug
     // console.log(EventDateInfo.length);
 
+    // EVENT_INFO(イベント情報)の取得
+    const geteventinfo = await fetch('/api/geteventinfo',{
+      method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const EventInfo = await geteventinfo.json();
+
+    console.log(EventInfo);
+
+    let event_name = document.getElementById("event_name");
+    event_name.innerText = EventInfo[0]["event_name"];
+
+    let event_detail = document.getElementById("event_detail");
+    event_detail.innerText = EventInfo[0]["event_memo"];
+
+
+    //-------------------------
+
 
     //日にち候補の生成
     let date_option_container = document.getElementById("date_option_container");
@@ -84,15 +117,17 @@ const { id } = Astro.params;
 
     EventDateInfo.forEach(function(record){
         // console.log(record);
-        console.log(record["schedule_name"]);
+        // console.log(record["schedule_name"]);
 
         let para = document.createElement("p");
         let span = document.createElement("span");
-        span.style.width = "150px";
+        span.style.width = "300px";
         span.style.display= "inline-block";
         let node = document.createTextNode(record["schedule_name"]);
 
         let pulldownList = document.createElement("select");
+        pulldownList.setAttribute("id", "select-id-"+i.toString());
+
         let apply_option = document.createElement("option");
         apply_option.setAttribute("value", "1");
         apply_option.text="○";
@@ -114,6 +149,8 @@ const { id } = Astro.params;
         para.appendChild(pulldownList);
 
         date_option_container.appendChild(para);
+
+        i++;
     });
 
     // 日にち候補一覧の作成
@@ -152,5 +189,7 @@ const { id } = Astro.params;
     date_list_container.innerHTML = table;
 
   }
+
+  // 出欠状況DBへ登録
 
 </script>
