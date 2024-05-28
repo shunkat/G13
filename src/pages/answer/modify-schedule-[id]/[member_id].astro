@@ -22,12 +22,14 @@ const { id } = Astro.params;
       <hr>
       <label>名前</label><br/>
       <label>絵文字は使用出来ません</label><br/>
-      <input type="text" id="name" style="width:500px"><br/>
+      <input type="text" id="name" style="width:500px;height:30px"><br/>
       <label>日にち候補</label><br/>
       <div id="date_option_container" style="text-align: center;"></div>
       <label>コメント</label><br/>
-      <input type="text" id="comment" style="width:500px">
-      <p><button id="updateButton">更新</button></p>
+      <input type="text" id="comment" style="width:500px;height:30px">
+      <p style="text-align: center;">
+        <button id="updateButton" style="width:100px;height:30px">更新</button>
+      </p>
     </div>
   </main>
 </Layout>
@@ -51,112 +53,160 @@ const { id } = Astro.params;
 </style>
 
 <script>
-    window.onload = async function(){
+window.onload = async function(){
 
-const pathname = window.location.pathname; 
+    const pathname = window.location.pathname; 
 
-const filename = pathname.substring(pathname.lastIndexOf("/")+1); 
-// イベントNoを取得する
-const event_no =  filename.substring(16);
+    const filename = pathname.substring(pathname.lastIndexOf("/",pathname.lastIndexOf("/")-1)+1); 
 
-// EVENT_DATE_INFO(日程情報)の取得
-const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          event_no: event_no
-        })
-});
+    // イベントNoを取得する
+    const event_no =  filename.substring(16, filename.length-2);
 
-const EventDateInfo = await getEventDateInfoResponse.json();
-
-// debug
-// console.log(EventDateInfo.length);
-
-// EVENT_INFO(イベント情報)の取得
-const geteventinfo = await fetch('/api/geteventinfo',{
-  method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          event_no: event_no
-        })
-});
-
-const EventInfo = await geteventinfo.json();
-
-console.log(EventInfo);
-
-let event_name = document.getElementById("event_name");
-event_name.innerText = EventInfo[0]["event_name"];
-
-let event_detail = document.getElementById("event_detail");
-event_detail.innerText = EventInfo[0]["event_memo"];
+    //メンバーIDを取得する
+    const meme_id = pathname.substring(pathname.lastIndexOf("/")+1); 
 
 
-//-------------------------
+
+    // >>>>>>>>>>>>>>>>> EVENT_DATE_INFO (日程情報)の取得
+    const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const EventDateInfo = await getEventDateInfoResponse.json();
+
+    // debug
+    // console.log(EventDateInfo);
+
+    // >>>>>>>>>>>>>>>>> EVENT_INFO (イベント情報)の取得
+    const geteventinfo = await fetch('/api/geteventinfo',{
+      method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const EventInfo = await geteventinfo.json();
+
+    // >>>>>>>>>>>>>>>>> ATTEND_MEMBER_INFO (日程参加者の情報)の取得
+    const getattendmemberinfo = await fetch ('/api/getattendmemberinfo',{
+      method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const AttendMemberInfo = await getattendmemberinfo.json();
+
+    // const member_name = AttendMemberInfo.
+
+    // debug
+    // console.log(AttendMemberInfo);
 
 
-//日にち候補の生成
-let date_option_container = document.getElementById("date_option_container");
 
-let i = 0;
+    // >>>>>>>>>>>>>>>>> EVENT_MEMBER (参加者情報)の取得
+    const geteventmember = await fetch ('/api/geteventmember',{
+      method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
 
-EventDateInfo.forEach(function(record){
-    // console.log(record);
-    // console.log(record["schedule_name"]);
+    const EventMember = await geteventmember.json();
 
-    let para = document.createElement("p");
-    let span = document.createElement("span");
-    span.style.width = "300px";
-    span.style.display= "inline-block";
-    let node = document.createTextNode(record["schedule_name"]);
+    const filterResult = filterByName(meme_id,EventMember);
 
-    let pulldownList = document.createElement("select");
-    pulldownList.setAttribute("id", "select-id-"+i.toString());
+    const member_name = filterResult[0]["member_name"];
 
-    let apply_option = document.createElement("option");
-    apply_option.setAttribute("value", "1");
-    apply_option.text="○";
-    let unkown_option = document.createElement("option");
-    unkown_option.setAttribute("value", "2");
-    unkown_option.text= "△";
-    let deny_option = document.createElement("option");
-    deny_option.setAttribute("value", "3");
-    deny_option.text = "×";
-
-    span.appendChild(node);
-
-    pulldownList.add(apply_option);
-    pulldownList.appendChild(unkown_option);
-    pulldownList.appendChild(deny_option);
+    // console.log(AttendMemberInfo);
 
 
-    para.appendChild(span);       
-    para.appendChild(pulldownList);
 
-    date_option_container.appendChild(para);
 
-    i++;
-});
+    let event_name = document.getElementById("event_name");
+    event_name.innerText = EventInfo[0]["event_name"];
 
-// 日にち候補一覧の作成
-createTable(EventDateInfo);
+    let event_detail = document.getElementById("event_detail");
+    event_detail.innerText = EventInfo[0]["event_memo"];
+
+
+    //-------------------------
+
+
+    //日にち候補の生成
+    let date_option_container = document.getElementById("date_option_container");
+
+    let i = 0;
+
+    EventDateInfo.forEach(function(record){
+        // console.log(record);
+        // console.log(record["schedule_name"]);
+
+        let para = document.createElement("p");
+        let span = document.createElement("span");
+        span.style.width = "300px";
+        span.style.display= "inline-block";
+        let node = document.createTextNode(record["schedule_name"]);
+
+        let pulldownList = document.createElement("select");
+        pulldownList.style.width = "40px";
+        pulldownList.style.height = "25px";
+        pulldownList.setAttribute("id", "select-id-"+i.toString());
+
+        let apply_option = document.createElement("option");
+        apply_option.setAttribute("value", "1");
+        apply_option.text="○";
+        let unkown_option = document.createElement("option");
+        unkown_option.setAttribute("value", "2");
+        unkown_option.text= "△";
+        let deny_option = document.createElement("option");
+        deny_option.setAttribute("value", "3");
+        deny_option.text = "×";
+
+        span.appendChild(node);
+
+        pulldownList.add(apply_option);
+        pulldownList.appendChild(unkown_option);
+        pulldownList.appendChild(deny_option);
+
+
+        para.appendChild(span);       
+        para.appendChild(pulldownList);
+
+        date_option_container.appendChild(para);
+
+        i++;
+    });
+
+    // 日にち候補一覧の作成
+    createTable(EventDateInfo,member_name,AttendMemberInfo);
 
 
 };
 
 // 日にち候補一覧の作成
-function createTable(EventDateInfo){
+function createTable(EventDateInfo,member_name,AttendMemberInfo){
 
 let date_list_container = document.getElementById("date_list_container");
 
 let table = '<table border=1 width="500">';
 
-let title = '<tr><td>日程</td><td>○</td><td>△</td><td>×</td></tr>'
+let title = '<tr><td>日程</td><td>○</td><td>△</td><td>×</td><td>'+member_name+'</td></tr>';
   
 table += title;
 
@@ -167,11 +217,28 @@ for(let i=0; i < EventDateInfo.length; i++){
         table += "<td>" + EventDateInfo[i]["schedule_name"]+ "</td>";
       }
 
-      table += "<td>" +  + "</td>";
+      table += "<td>" + '' + "</td>";
+
+      if(j == 2){
+        let orderJoinReslut = getOrderJoinInfo(EventDateInfo[i]["schedule_id"],member_name,AttendMemberInfo);
+
+        if(orderJoinReslut[0]["member_attendance"] == 0){
+          table += "<td>" + '○' + "</td>";
+
+        }
+        else if (orderJoinReslut[0]["member_attendance"] == 1){
+          table += "<td>" + '△' + "</td>";
+
+        }
+        else if(orderJoinReslut[0]["member_attendance"] == 2){
+          table += "<td>" + '×' + "</td>";
+        }
+
+      }
     }
 }
 
-let command = '<tr><td>コメント</td><td></td><td></td><td></td></tr>'
+let command = '<tr><td>コメント</td><td></td><td></td><td></td><td></td></tr>'
 
 table += command;
 
@@ -180,7 +247,18 @@ date_list_container.innerHTML = table;
 
 }
 
-// 出欠状況DBへ登録
+// 参加メンバーの名前を取得
+function filterByName(filterObj , Obj){
 
+  return Obj.filter(item => item.member_id == filterObj)
+
+}
+
+// 参加メンバーの出欠状況を取得
+function getOrderJoinInfo(filterObj1 ,filterObj2, Obj){
+
+  return Obj.filter(item => item.member_id == filterObj1 || item.schedule_id == filterObj2)
+
+}
 
 </script>
