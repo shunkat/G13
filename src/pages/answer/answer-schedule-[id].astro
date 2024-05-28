@@ -22,12 +22,14 @@ const { id } = Astro.params;
       <hr>
       <label>名前</label><br/>
       <label>絵文字は使用出来ません</label><br/>
-      <input type="text" id="name" style="width:500px"><br/>
+      <input type="text" id="name" style="width:500px;height:30px"><br/>
       <label>日にち候補</label><br/>
       <div id="date_option_container" style="text-align: center;"></div>
       <label>コメント</label><br/>
-      <input type="text" id="comment" style="width:500px">
-      <p><button id="answerButton">回答</button></p>
+      <input type="text" id="comment" style="width:500px;height:30px">
+      <p style="text-align: center;">
+        <button id="answerButton" style="width:100px;height:30px">回答</button>
+      </p>
     </div>
   </main>
 </Layout>
@@ -98,7 +100,21 @@ const { id } = Astro.params;
 
     const EventInfo = await geteventinfo.json();
 
-    console.log(EventInfo);
+    // console.log(EventInfo);
+
+        // >>>>>>>>>>>>>>>>> ATTEND_MEMBER_INFO (日程参加者の情報)の取得
+    const getattendmemberinfo = await fetch ('/api/getattendmemberinfo',{
+      method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const AttendMemberInfo = await getattendmemberinfo.json();
+
 
     let event_name = document.getElementById("event_name");
     event_name.innerText = EventInfo[0]["event_name"];
@@ -126,6 +142,8 @@ const { id } = Astro.params;
         let node = document.createTextNode(record["schedule_name"]);
 
         let pulldownList = document.createElement("select");
+        pulldownList.style.width = "40px";
+        pulldownList.style.height = "25px";
         pulldownList.setAttribute("id", "select-id-"+i.toString());
 
         let apply_option = document.createElement("option");
@@ -154,13 +172,13 @@ const { id } = Astro.params;
     });
 
     // 日にち候補一覧の作成
-    createTable(EventDateInfo);
+    createTable(EventDateInfo,AttendMemberInfo);
 
 
   };
 
   // 日にち候補一覧の作成
-  function createTable(EventDateInfo){
+  function createTable(EventDateInfo,AttendMemberInfo){
 
     let date_list_container = document.getElementById("date_list_container");
 
@@ -172,12 +190,22 @@ const { id } = Astro.params;
 
     for(let i=0; i < EventDateInfo.length; i++){
         table += '<tr>';
-        for(let j = 0; j< 3; j++ ){
+        for(let j = 0; j< 4; j++ ){
           if(j == 0){
             table += "<td>" + EventDateInfo[i]["schedule_name"]+ "</td>";
           }
 
-          table += "<td>" +  + "</td>";
+          if(j == 1){
+            table += "<td>" + getScheduleJoinInfo(EventDateInfo[i]["schedule_id"],'0',AttendMemberInfo).length + "</td>";
+          }
+
+          if(j == 2){
+            table += "<td>" + getScheduleJoinInfo(EventDateInfo[i]["schedule_id"],'1',AttendMemberInfo).length + "</td>";
+          }
+
+          if(j == 3){
+            table += "<td>" + getScheduleJoinInfo(EventDateInfo[i]["schedule_id"],'2',AttendMemberInfo).length + "</td>";
+          }
         }
     }
 
@@ -190,6 +218,12 @@ const { id } = Astro.params;
 
   }
 
-  // 出欠状況DBへ登録
+  // 各日程の参加者取得
+function getScheduleJoinInfo(filterObj1 ,filterObj2 , Obj){
+
+return Obj.filter(item => item.schedule_id == filterObj1 && item.member_attendance == filterObj2)
+
+}
+
 
 </script>
