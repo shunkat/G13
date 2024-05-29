@@ -4,9 +4,8 @@ const { id } = Astro.params;
 ---
 
 <Layout title="出欠情報更新ページ">
-  <main>
+  <main id="id-transfer" data-message={id}>
     <h1>日程修正ページ</h1>
-    <p>ID: {id}</p>
     <!-- <p>日程修正部分</p> -->
     <div style="margin: auto;text-align: left;" >
       <h3>イベント名</h3>

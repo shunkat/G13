@@ -4,7 +4,7 @@ const { id } = Astro.params;
 ---
 
 <Layout title="日程回答ページ">
-  <main>
+  <main id="id-transfer" data-message={id}>
     <h1>日程回答ページ</h1>
     <p>ID: {id}</p>
     <!-- <p>日程回答部分</p> -->
@@ -22,7 +22,7 @@ const { id } = Astro.params;
       <hr>
       <label>名前</label><br/>
       <label>絵文字は使用出来ません</label><br/>
-      <input type="text" id="name" style="width:500px;height:30px"><br/>
+      <input type="text" id="username" style="width:500px;height:30px"><br/>
       <label>日にち候補</label><br/>
       <div id="date_option_container" style="text-align: center;"></div>
       <label>コメント</label><br/>
@@ -56,9 +56,14 @@ const { id } = Astro.params;
 
 <script>
 
+  const id = document.getElementById("id-transfer").getAttribute("data-message");
+
   document.getElementById('answerButton').addEventListener('click', () => {
     const eventId = "{id}";
-    window.location.href = `/answer/show-schedule-result-${eventId}`;
+    // window.location.href = `/answer/show-schedule-result-${eventId}`;
+
+    createMember();
+
   });
 
 
@@ -219,11 +224,35 @@ const { id } = Astro.params;
   }
 
   // 各日程の参加者取得
-function getScheduleJoinInfo(filterObj1 ,filterObj2 , Obj){
+  function getScheduleJoinInfo(filterObj1 ,filterObj2 , Obj){
 
-return Obj.filter(item => item.schedule_id == filterObj1 && item.member_attendance == filterObj2)
+    return Obj.filter(item => item.schedule_id == filterObj1 && item.member_attendance == filterObj2)
 
-}
+  }
 
+
+  async function createMember(){
+
+    const memberName = (document.getElementById("username") as HTMLInputElement).value;
+    const event_no = id;
+    const commandText = (document.getElementById("comment")as HTMLInputElement).value;
+
+    // console.log(memberName);
+    // console.log(eventID);
+    // console.log(commandText);
+    const addeventmemberResponse = await fetch('/api/addeventmember', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              member_name: memberName,
+              event_no:event_no,
+              comment:commandText
+            })
+    });
+
+
+  }
 
 </script>
