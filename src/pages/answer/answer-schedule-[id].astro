@@ -55,6 +55,8 @@ const { id } = Astro.params;
 
 
 <script>
+import MemberId from "./modify-schedule-[id]/[member_id].astro";
+
 
   const id = document.getElementById("id-transfer").getAttribute("data-message");
 
@@ -240,6 +242,7 @@ const { id } = Astro.params;
     // console.log(memberName);
     // console.log(eventID);
     // console.log(commandText);
+    // 参加者情報(EVENT_MEMBER)へ メンバー情報を登録する
     const addeventmemberResponse = await fetch('/api/addeventmember', {
             method: 'POST',
             headers: {
@@ -251,6 +254,33 @@ const { id } = Astro.params;
               comment:commandText
             })
     });
+
+    // console.log(addeventmemberResponse.json());
+    const addeventmemberReslut = await addeventmemberResponse.json();
+
+    const member_id = addeventmemberReslut[0]["member_id"];
+
+    // 日程参加者の情報(ATTEND_MEMBER_INFO)へ メンバーの出欠状況を登録する
+
+        const addattendmemberinfoResponse = await fetch('/api/addattendmemberinfo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: memberName,
+              member_id: event_no,
+              schedule_id: commandText
+            })
+    });
+
+
+
+  }
+
+  function createInsertDatas(){
+
+    let insertDatas= [];
 
 
   }

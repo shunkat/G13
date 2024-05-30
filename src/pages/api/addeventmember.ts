@@ -10,7 +10,9 @@ export const POST: APIRoute = async ({ request }) => {
         member_name: member_name ,
         event_no: event_no ,
         comment: comment 
-        });
+        })
+    .select();
+    
 
     if (error) {
         return new Response(
