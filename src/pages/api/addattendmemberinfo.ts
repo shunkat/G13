@@ -3,14 +3,14 @@ import { supabase } from "../../lib/supabase";
 
 export const POST: APIRoute = async ({ request }) => {
 
-    const {  event_no ,member_id, schedule_id }  = await request.json();      
+    const jsonData   = await request.json();
+    const insertDatas = await jsonData;
     const { data, error } = await supabase
     .from('attend_member_info')
-    .insert({
-        event_no: event_no ,
-        member_id: member_id ,
-        SCHEDULE_ID: schedule_id 
-    });
+    .insert(   
+      insertDatas
+    )
+    .select();
     
 
     if (error) {

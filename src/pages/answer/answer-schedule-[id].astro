@@ -154,13 +154,13 @@ import MemberId from "./modify-schedule-[id]/[member_id].astro";
         pulldownList.setAttribute("id", "select-id-"+i.toString());
 
         let apply_option = document.createElement("option");
-        apply_option.setAttribute("value", "1");
+        apply_option.setAttribute("value", "0");
         apply_option.text="○";
         let unkown_option = document.createElement("option");
-        unkown_option.setAttribute("value", "2");
+        unkown_option.setAttribute("value", "1");
         unkown_option.text= "△";
         let deny_option = document.createElement("option");
-        deny_option.setAttribute("value", "3");
+        deny_option.setAttribute("value", "2");
         deny_option.text = "×";
 
         span.appendChild(node);
@@ -237,12 +237,42 @@ import MemberId from "./modify-schedule-[id]/[member_id].astro";
 
     const memberName = (document.getElementById("username") as HTMLInputElement).value;
     const event_no = id;
-    const commandText = (document.getElementById("comment")as HTMLInputElement).value;
+    const commandText = (document.getElementById("comment") as HTMLInputElement).value;
 
     // console.log(memberName);
     // console.log(eventID);
     // console.log(commandText);
+
     // 参加者情報(EVENT_MEMBER)へ メンバー情報を登録する
+    const addeventmemberReslut = await insertIntoEventMember(memberName,event_no,commandText);
+    const member_id = addeventmemberReslut[0]["member_id"].toString();
+
+    let insertDatas= [];
+    let i = 0;
+    while(document.getElementById("select-id-" + i)){
+
+      let ele = (document.getElementById("select-id-" + i) as HTMLInputElement).value;
+
+      let data = {};
+      data["member_id"] = member_id;
+      data["schedule_id"] = i.toString();
+      data["member_attendance"] = ele;
+      data["attendance_info_update_time"] = "2024/05/31";    
+      data["event_no"] = id;
+      insertDatas.push(data);
+      i++;
+    }
+
+    // console.log(JSON.stringify(insertDatas));
+
+    // 参加者情報(EVENT_MEMBER)へ メンバー情報を登録する
+    const attendmemberinfoReslut = await insertIntoAttendMemberInfo(insertDatas);
+
+  }
+
+  // 参加者情報(EVENT_MEMBER)へ メンバー情報を登録する
+  async function insertIntoEventMember(memberName,event_no,commandText){
+
     const addeventmemberResponse = await fetch('/api/addeventmember', {
             method: 'POST',
             headers: {
@@ -255,34 +285,25 @@ import MemberId from "./modify-schedule-[id]/[member_id].astro";
             })
     });
 
-    // console.log(addeventmemberResponse.json());
-    const addeventmemberReslut = await addeventmemberResponse.json();
+    return await addeventmemberResponse.json();
+  }
 
-    const member_id = addeventmemberReslut[0]["member_id"];
+  // 日程参加者の情報(ATTEND_MEMBER_INFO)へ メンバーの出欠状況を登録する
+  async function insertIntoAttendMemberInfo(insertDatas){
 
-    // 日程参加者の情報(ATTEND_MEMBER_INFO)へ メンバーの出欠状況を登録する
-
-        const addattendmemberinfoResponse = await fetch('/api/addattendmemberinfo', {
+    const addattendmemberinfoResponse = await fetch('/api/addattendmemberinfo',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              event_no: memberName,
-              member_id: event_no,
-              schedule_id: commandText
-            })
+            body: JSON.stringify(
+                insertDatas
+            )
     });
 
-
-
-  }
-
-  function createInsertDatas(){
-
-    let insertDatas= [];
-
+    return await addattendmemberinfoResponse.json();
 
   }
+
 
 </script>
