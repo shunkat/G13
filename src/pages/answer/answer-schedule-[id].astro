@@ -249,6 +249,10 @@ import MemberId from "./modify-schedule-[id]/[member_id].astro";
 
     let insertDatas= [];
     let i = 0;
+
+    let mydate = new Date();
+    let today = mydate.toLocaleDateString();
+
     while(document.getElementById("select-id-" + i)){
 
       let ele = (document.getElementById("select-id-" + i) as HTMLInputElement).value;
@@ -257,7 +261,7 @@ import MemberId from "./modify-schedule-[id]/[member_id].astro";
       data["member_id"] = member_id;
       data["schedule_id"] = i.toString();
       data["member_attendance"] = ele;
-      data["attendance_info_update_time"] = "2024/05/31";    
+      data["attendance_info_update_time"] = today;    
       data["event_no"] = id;
       insertDatas.push(data);
       i++;
