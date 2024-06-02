@@ -60,8 +60,15 @@ const { id } = Astro.params;
 
   document.getElementById('answerButton').addEventListener('click', () => {
     const eventId = "{id}";
-    createMember();
-    window.location.href = `/answer/show-schedule-result-${id}`;
+    new Promise((resolve) => {
+
+      createMember();
+      resolve;
+      
+    }).then(()=>{
+      window.location.href = `/answer/show-schedule-result-${id}`;
+    });
+ 
 
 
   });
