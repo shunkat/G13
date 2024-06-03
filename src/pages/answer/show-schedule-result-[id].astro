@@ -97,12 +97,14 @@ const { id } = Astro.params;
         },
         body: JSON.stringify({ event_no })
       });
-
       if (!getEventInfoResponse.ok) {
-        throw new Error('Failed to fetch event info');
+        throw new Error('イベント情報の取得に失敗しました');
       }
 
       let eventInfo = await getEventInfoResponse.json();
+      if (eventInfo.length === 0) {
+        throw new Error('イベント情報が見つかりませんでした');
+      }
       eventInfo = eventInfo[0];
       document.getElementById('event-name').innerText = eventInfo.event_name;
       document.getElementById('event-memo').innerText = eventInfo.event_memo;
@@ -117,10 +119,13 @@ const { id } = Astro.params;
       });
 
       if (!getEventDateInfoResponse.ok) {
-        throw new Error('Failed to fetch event date info');
+        throw new Error('日程情報の取得に失敗しました');
       }
 
       const EventDateInfo = await getEventDateInfoResponse.json();
+      if (EventDateInfo.length === 0) {
+        throw new Error('日程情報が見つかりませんでした');
+      }
 
       // EVENT_MEMBERテーブルからメンバー情報を取得
       const getEventMemberResponse = await fetch('/api/geteventmember', {
@@ -132,10 +137,13 @@ const { id } = Astro.params;
       });
 
       if (!getEventMemberResponse.ok) {
-        throw new Error('Failed to fetch event member');
+        throw new Error('メンバー情報の取得に失敗しました');
       }
 
       const EventMemberInfo = await getEventMemberResponse.json();
+      if (EventMemberInfo.length === 0) {
+        throw new Error('メンバー情報が見つかりませんでした');
+      }
 
       // ATTEND_MEMBER_INFOテーブルから出欠情報を取得
       const getAttendMemberInfoResponse = await fetch('/api/getattendmemberinfo', {
@@ -147,7 +155,7 @@ const { id } = Astro.params;
       });
 
       if (!getAttendMemberInfoResponse.ok) {
-        throw new Error('Failed to fetch attend member info');
+        throw new Error('出欠情報の取得に失敗しました');
       }
 
       const AttendMemberInfo = await getAttendMemberInfoResponse.json();
@@ -157,18 +165,17 @@ const { id } = Astro.params;
       createTable(EventDateInfo, EventMemberInfo, AttendMemberInfo, attendanceSummary);
     } catch (error) {
       console.error('Error:', error);
+      alert(error.message);
     }
   };
 
   function summarizeAttendance(EventDateInfo, AttendMemberInfo) {
-    const summary = EventDateInfo.map(dateInfo => {
-      return {
-        schedule_id: dateInfo.schedule_id,
-        yes_count: 0,
-        maybe_count: 0,
-        no_count: 0
-      };
-    });
+    const summary = EventDateInfo.map(dateInfo => ({
+      schedule_id: dateInfo.schedule_id,
+      yes_count: 0,
+      maybe_count: 0,
+      no_count: 0
+    })).filter(summary => summary.schedule_id !== undefined);
 
     AttendMemberInfo.forEach(attendance => {
       const dateSummary = summary.find(s => s.schedule_id === attendance.schedule_id);
@@ -238,9 +245,9 @@ const { id } = Astro.params;
       table += '<tr>';
       const summary = attendanceSummary.find(s => s.schedule_id === info.schedule_id);
       table += `<td>${info.schedule_name}</td>`;
-      table += `<td>${summary.yes_count}</td>`;
-      table += `<td>${summary.maybe_count}</td>`;
-      table += `<td>${summary.no_count}</td>`;
+      table += `<td>${summary ? summary.yes_count : 0}</td>`;
+      table += `<td>${summary ? summary.maybe_count : 0}</td>`;
+      table += `<td>${summary ? summary.no_count : 0}</td>`;
       
       // 各メンバーの出欠状況を追加
       EventMemberInfo.forEach(member => {

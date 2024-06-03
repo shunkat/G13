@@ -55,11 +55,13 @@ const { id } = Astro.params;
 
 
 <script>
+  const id = document.getElementById("id-transfer").getAttribute("data-message");
 
   const id = document.getElementById("id-transfer").getAttribute("data-message");
 
   document.getElementById('answerButton').addEventListener('click', () => {
     const eventId = "{id}";
+
 
 
       createMember();
@@ -72,12 +74,8 @@ const { id } = Astro.params;
 
     // 画面初期表示
   window.onload = async function(){
-
-    const pathname = window.location.pathname; 
-
-    const filename = pathname.substring(pathname.lastIndexOf("/")+1); 
     // イベントNoを取得する
-    const event_no =  filename.substring(16);
+    const event_no =  id
 
     // EVENT_DATE_INFO(日程情報)の取得
     const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
@@ -92,8 +90,6 @@ const { id } = Astro.params;
 
     const EventDateInfo = await getEventDateInfoResponse.json();
 
-    // debug
-    // console.log(EventDateInfo.length);
 
     // EVENT_INFO(イベント情報)の取得
     const geteventinfo = await fetch('/api/geteventinfo',{
@@ -110,7 +106,7 @@ const { id } = Astro.params;
 
     // console.log(EventInfo);
 
-        // >>>>>>>>>>>>>>>>> ATTEND_MEMBER_INFO (日程参加者の情報)の取得
+
     const getattendmemberinfo = await fetch ('/api/getattendmemberinfo',{
       method: 'POST',
             headers: {
@@ -131,7 +127,41 @@ const { id } = Astro.params;
     event_detail.innerText = EventInfo[0]["event_memo"];
 
 
-    //-------------------------
+
+
+    // EVENT_INFO(イベント情報)の取得
+    const geteventinfo = await fetch('/api/geteventinfo',{
+      method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const EventInfo = await geteventinfo.json();
+
+    // console.log(EventInfo);
+
+    const getattendmemberinfo = await fetch ('/api/getattendmemberinfo',{
+      method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_no: event_no
+            })
+    });
+
+    const AttendMemberInfo = await getattendmemberinfo.json();
+
+
+    let event_name = document.getElementById("event_name");
+    event_name.innerText = EventInfo[0]["event_name"];
+
+    let event_detail = document.getElementById("event_detail");
+    event_detail.innerText = EventInfo[0]["event_memo"];
 
 
     //日にち候補の生成
@@ -153,6 +183,7 @@ const { id } = Astro.params;
         pulldownList.style.width = "40px";
         pulldownList.style.height = "25px";
         pulldownList.setAttribute("id", "select-id-"+i.toString());
+
 
         let apply_option = document.createElement("option");
         apply_option.setAttribute("value", "0");
