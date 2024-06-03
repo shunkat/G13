@@ -78,8 +78,6 @@ const { member_id } = Astro.params;
 
         //メンバーIDを取得する
         const meme_id = pathname.substring(pathname.lastIndexOf("/")+1); 
-
-        // >>>>>>>>>>>>>>>>> EVENT_DATE_INFO (日程情報)の取得
         const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
                 method: 'POST',
                 headers: {
