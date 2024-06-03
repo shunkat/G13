@@ -61,7 +61,6 @@ const { member_id } = Astro.params;
 
     document.getElementById('updateButton').addEventListener('click', () => {
 
-      // console.log("updateButton click");
       updateSchedule();
       window.location.href = `/answer/show-schedule-result-${id}`;
     });
@@ -90,10 +89,6 @@ const { member_id } = Astro.params;
 
         const EventDateInfo = await getEventDateInfoResponse.json();
 
-        // debug
-        // console.log(EventDateInfo);
-
-        // >>>>>>>>>>>>>>>>> EVENT_INFO (イベント情報)の取得
         const geteventinfo = await fetch('/api/geteventinfo',{
           method: 'POST',
                 headers: {
@@ -105,8 +100,6 @@ const { member_id } = Astro.params;
         });
 
         const EventInfo = await geteventinfo.json();
-
-        // >>>>>>>>>>>>>>>>> ATTEND_MEMBER_INFO (日程参加者の情報)の取得
         const getattendmemberinfo = await fetch ('/api/getattendmemberinfo',{
           method: 'POST',
                 headers: {
@@ -118,9 +111,6 @@ const { member_id } = Astro.params;
         });
 
         const AttendMemberInfo = await getattendmemberinfo.json();
-
-        // debug
-        // console.log(AttendMemberInfo);
 
         const geteventmember = await fetch ('/api/geteventmember',{
           method: 'POST',
@@ -155,9 +145,7 @@ const { member_id } = Astro.params;
         let i = 0;
 
         EventDateInfo.forEach(function(record){
-            // console.log(record);
-            // console.log(record["schedule_name"]);
-
+     
             let para = document.createElement("p");
             let span = document.createElement("span");
             span.style.width = "300px";
