@@ -124,7 +124,6 @@ const { member_id } = Astro.params;
         // debug
         // console.log(AttendMemberInfo);
 
-        // >>>>>>>>>>>>>>>>> EVENT_MEMBER (参加者情報)の取得
         const geteventmember = await fetch ('/api/geteventmember',{
           method: 'POST',
                 headers: {
@@ -137,11 +136,9 @@ const { member_id } = Astro.params;
 
         const EventMember = await geteventmember.json();
 
-
         const filterResult = filterByName(meme_id,EventMember);
 
         const member_name = filterResult[0]["member_name"];
-
 
 
 
@@ -152,8 +149,7 @@ const { member_id } = Astro.params;
         event_detail.innerText = EventInfo[0]["event_memo"];
 
 
-        //-------------------------
-
+    
 
         //日にち候補の生成
         let date_option_container = document.getElementById("date_option_container");
