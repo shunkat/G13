@@ -55,7 +55,6 @@ const { id } = Astro.params;
 
 
 <script>
-
   const id = document.getElementById("id-transfer").getAttribute("data-message");
 
   document.getElementById('answerButton').addEventListener('click', () => {
@@ -64,20 +63,13 @@ const { id } = Astro.params;
 
       createMember();
       
- 
-
-
   });
 
 
     // 画面初期表示
   window.onload = async function(){
-
-    const pathname = window.location.pathname; 
-
-    const filename = pathname.substring(pathname.lastIndexOf("/")+1); 
     // イベントNoを取得する
-    const event_no =  filename.substring(16);
+    const event_no =  id
 
     // EVENT_DATE_INFO(日程情報)の取得
     const getEventDateInfoResponse = await fetch('/api/geteventdateinfo', {
@@ -92,8 +84,6 @@ const { id } = Astro.params;
 
     const EventDateInfo = await getEventDateInfoResponse.json();
 
-    // debug
-    // console.log(EventDateInfo.length);
 
     // EVENT_INFO(イベント情報)の取得
     const geteventinfo = await fetch('/api/geteventinfo',{
