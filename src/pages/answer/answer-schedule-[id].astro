@@ -60,14 +60,10 @@ const { id } = Astro.params;
 
   document.getElementById('answerButton').addEventListener('click', () => {
     const eventId = "{id}";
-    new Promise((resolve) => {
+
 
       createMember();
-      resolve;
       
-    }).then(()=>{
-      window.location.href = `/answer/show-schedule-result-${id}`;
-    });
  
 
 
@@ -277,6 +273,13 @@ const { id } = Astro.params;
     // 参加者情報(EVENT_MEMBER)へ メンバー情報を登録する
     const attendmemberinfoReslut = await insertIntoAttendMemberInfo(insertDatas);
 
+    console.log(await attendmemberinfoReslut);
+
+    pageSwitch();
+  }
+
+  async function pageSwitch(){
+    window.location.href = `/answer/show-schedule-result-${id}`;
   }
 
   // 参加者情報(EVENT_MEMBER)へ メンバー情報を登録する
