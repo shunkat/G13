@@ -63,7 +63,7 @@ const { member_id } = Astro.params;
 
       // console.log("updateButton click");
       updateSchedule();
-      // window.location.href = `/answer/show-schedule-result-${eventId}`;
+      window.location.href = `/answer/show-schedule-result-${id}`;
     });
 
 
@@ -137,13 +137,10 @@ const { member_id } = Astro.params;
 
         const EventMember = await geteventmember.json();
 
-        // console.log(EventMember);
 
         const filterResult = filterByName(meme_id,EventMember);
 
         const member_name = filterResult[0]["member_name"];
-
-        // console.log(AttendMemberInfo);
 
 
 
