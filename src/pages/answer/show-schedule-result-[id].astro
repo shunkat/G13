@@ -141,9 +141,7 @@ const { id } = Astro.params;
       }
 
       const EventMemberInfo = await getEventMemberResponse.json();
-      if (EventMemberInfo.length === 0) {
-        throw new Error('メンバー情報が見つかりませんでした');
-      }
+
 
       // ATTEND_MEMBER_INFOテーブルから出欠情報を取得
       const getAttendMemberInfoResponse = await fetch('/api/getattendmemberinfo', {

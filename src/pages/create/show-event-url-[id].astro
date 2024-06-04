@@ -1,32 +1,48 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-// idを受け取る
 const { id } = Astro.params;
-
 ---
 
-<Layout title={`Schedule ID: ${id}`}>
-  <main>
-    <h1>Schedule ID: {id}</h1>
-    <p>Answer your schedule at the following URL:</p>
-    <a href={`/answer/show-schedule-result-${id}`}>/answer/show-schedule-result-{id}</a>
-  </main>
+<Layout title={`スケジュール設定: ${id}`}>
+ <main>
+   <h1>スケジュール設定</h1>
+   <p>以下のURLから出欠を入力できます。</p>
+   <a class="schedule-link" href={`/answer/show-schedule-result-${id}`}>/answer/show-schedule-result-{id}</a>
+ </main>
 </Layout>
 
 <style>
-  main {
-    margin: auto;
-    padding: 1rem;
-    width: 800px;
-    max-width: calc(100% - 2rem);
-    background-color: white;
-    color: black;
-    font-size: 20px;
-    line-height: 1.6;
-  }
-  h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1em;
-  }
+ main {
+   margin: auto;
+   padding: 2rem;
+   max-width: 800px;
+   background-color: #f5f5f5;
+   color: #333;
+   font-family: 'Noto Sans JP', sans-serif;
+   text-align: center;
+   border-radius: 8px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+ }
+ h1 {
+   font-size: 2.5rem;
+   font-weight: bold;
+   margin-bottom: 1.5rem;
+   color: #4a90e2;
+ }
+ p {
+   font-size: 1.2rem;
+   margin-bottom: 2rem;
+ }
+ .schedule-link {
+   display: inline-block;
+   padding: 1rem 2rem;
+   background-color: #4a90e2;
+   color: #fff;
+   text-decoration: none;
+   border-radius: 4px;
+   transition: background-color 0.3s ease;
+ }
+ .schedule-link:hover {
+   background-color: #3377c8;
+ }
 </style>
